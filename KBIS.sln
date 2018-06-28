@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "KBIS", "KBIS\KBIS.pyproj", "{50EA900B-B588-4C4C-AF07-D2FA2113AA62}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50EA900B-B588-4C4C-AF07-D2FA2113AA62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50EA900B-B588-4C4C-AF07-D2FA2113AA62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3FBDEA04-1B51-4F67-A543-571F554FA5FE}
+	EndGlobalSection
+EndGlobal
