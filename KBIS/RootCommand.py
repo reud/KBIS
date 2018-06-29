@@ -3,7 +3,7 @@ import LogWriterClassVer
 class RootCommand(object):#謎そしてクソコードなのでだれか直して
     def __init__(self,api,memberList,command,arg1='none',arg2='none',arg3='none',arg4='none',arg5='none'):
         self.l=LogWriterClassVer.LogWriterClassVer()
-        self.my_screen_name="kbisnaikei"
+        self.api.VerifyCredentials().screen_name="kbisnaikei"
         self.command=command
         self.arg1=arg1
         self.arg2=arg2
@@ -29,7 +29,7 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                     self.AllValidityChanger(True)
         if(self.command=="CallUser"):
             if(self.arg1=="Direct" or self.arg1=="Hthan" or self.arg1=="Lthan" or self.arg1== "Equals" or self.arg1=="All"):
-                self.api.PostDirectMessage(screen_name=self.my_screen_name,text="妥当性:Maybe Safe \r\n CallUserコマンドはミスってても事前に妥当性を確認することができません。\r\n 気を付けてくださいね！")
+                self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="妥当性:Maybe Safe \r\n CallUserコマンドはミスってても事前に妥当性を確認することができません。\r\n 気を付けてくださいね！")
                 self.AllValidityChanger(True)
     def Renew(self,command,arg1='none',arg2='none',arg3='none',arg4='none',arg5='none'):#実際のコマンド実行はこちらで
         self.command=command
@@ -56,14 +56,14 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                     elif(self.arg2=="TL"):
                         self.autoTweetPlaceAtTL=True
                     else:
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="arg2 invalid DM or TL plz")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="arg2 invalid DM or TL plz")
                 if(self.arg1=="Responce"):
                     if(self.arg2=="DM"):
                         self.responcePlaceAtDM=True
                     elif(self.arg2=="TL"):
                         self.responcePlaceAtDM=False
                     else:
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="arg2 invalid DM or TL plz")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="arg2 invalid DM or TL plz")
            if(self.command=="CallUser"):
                 count=0
                 if(self.arg1=="All"):
@@ -81,27 +81,27 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                         except:
                             self.l.LogWrite("print",str(i.twiiterID)+"("+i.name+")"+"への送信に失敗")
                             self.l.LogWrite("print",traceback.format_exc())
-                    self.api.PostDirectMessage(screen_name=self.my_screen_name,text=str(count)+"人に送信しました")
+                    self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text=str(count)+"人に送信しました")
                 if(self.arg1=="Direct"):
                     key=False
                     for i in self.memberList:
                         if(i.twiiterID==self.arg2):
                             try:
                                 self.api.PostDirectMessage(screen_name=i.twiiterID,text="KBISよりお知らせです。\r\n"+i.name+" さんは現在【"+str(i.money)+"円】を滞納しています。\r\n徴収額は活動頻度に関わらず部員全員に平等に割り振られています。お支払をお願いいたします。")
-                                self.api.PostDirectMessage(screen_name=self.my_screen_name,text="送信に成功しました（多分）")
+                                self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="送信に成功しました（多分）")
                             except:
                                 self.l.LogWrite("print",str(i.twiiterID)+"("+i.name+")"+"への送信に失敗")
                                 self.l.LogWrite("print",traceback.format_exc())
                             key=True
                     if(not key):
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="該当するユーザーが見つかりませんでした。")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="該当するユーザーが見つかりませんでした。")
                         self.l.LogWrite("CantFind",self.arg2)
                 if(self.arg1=="Hthan"):
                     count=0
                     try:
                         self.l.LogWrite("print","trying:"+str(int(self.arg2)))
                     except:
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="【注意】arg2は数字を入れてください")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="【注意】arg2は数字を入れてください")
                         return
                     for i in self.memberList:
                         try:
@@ -111,13 +111,13 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                         except:
                             self.l.LogWrite("print",str(i.twiiterID)+"("+i.name+")"+"への送信に失敗")
                             self.l.LogWrite("print",traceback.format_exc())
-                    self.api.PostDirectMessage(screen_name=self.my_screen_name,text=str(count)+"人に送信しました")
+                    self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text=str(count)+"人に送信しました")
                 if(self.arg1=="Lthan"):
                     count=0
                     try:
                         self.l.LogWrite("print","trying:"+str(int(self.arg2)))
                     except:
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="【注意】arg2は数字を入れてください")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="【注意】arg2は数字を入れてください")
                         return
                     for i in self.memberList:
                         try:
@@ -127,13 +127,13 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                         except:
                             self.l.LogWrite("print",str(i.twiiterID)+"("+i.name+")"+"への送信に失敗")
                             self.l.LogWrite("print",traceback.format_exc())
-                    self.api.PostDirectMessage(screen_name=self.my_screen_name,text=str(count)+"人に送信しました")                    
+                    self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text=str(count)+"人に送信しました")                    
                 if(self.arg1=="Equals"):
                     count=0
                     try:
                         self.l.LogWrite("print","trying:"+str(int(self.arg2)))
                     except:
-                        self.api.PostDirectMessage(screen_name=self.my_screen_name,text="【注意】self.arg2は数字を入れてください")
+                        self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text="【注意】self.arg2は数字を入れてください")
                         return
                     for i in self.memberList:
                         if(not (i.twiiterID=="none") and (i.money==int(self.arg2))):
@@ -143,4 +143,4 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                             except:
                                 self.l.LogWrite("print",str(i.twiiterID)+"("+i.name+")"+"への送信に失敗")
                                 self.l.LogWrite("print",traceback.format_exc())
-                    self.api.PostDirectMessage(screen_name=self.my_screen_name,text=str(count)+"人に送信しました")  
+                    self.api.PostDirectMessage(screen_name=self.api.VerifyCredentials().screen_name,text=str(count)+"人に送信しました")  
