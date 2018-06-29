@@ -1,6 +1,6 @@
 # coding:utf-8
 import LogWriterClassVer
-class RootCommand(object):#謎そしてクソコードなのでだれか直して
+class RootCommand(object):#謎そしてクソコードなのでだれか直して頼む
     def __init__(self,api,memberList,command,arg1='none',arg2='none',arg3='none',arg4='none',arg5='none'):
         self.l=LogWriterClassVer.LogWriterClassVer()
         self.api.VerifyCredentials().screen_name="kbisnaikei"
