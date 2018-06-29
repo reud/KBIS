@@ -35,7 +35,7 @@ def CommandReader(command):
     _command=command.split(" ")
     print(str(_command)+"and size"+str(len(_command)))
     if(len(_command)<2):
-        api.PostDirectMessage(screen_name=my_screen_name,text="rootコマンドとして多分おかしいんじゃないかな？")
+        api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name,text="rootコマンドとして多分おかしいんじゃないかな？")
     elif(str(len(_command))=="2"):
          rootcomand.Renew(_command.pop(0),_command.pop(0))
     elif(str(len(_command))=="3"):
@@ -47,7 +47,7 @@ def CommandReader(command):
     elif(str(len(_command))=="6"):
          rootcomand.Renew(_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0))     
     else:
-        api.PostDirectMessage(screen_name=my_screen_name,text="引数が多すぎる")
+        api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name,text="引数が多すぎる")
 
 
 
@@ -297,7 +297,7 @@ def AutoTweet(toSaidSwitch,api):
         if(rootcomand.GetAutoTweetState()):
             api.PostUpdate(str(now)+"\r\n"+"【定期更新】"+"\r\n"+"現在の会計残高は"+str("{:,}".format(sum))+"円です。")
         else:
-            api.PostDirectMessage(screen_name=my_screen_name,text=str(now)+"\r\n"+"【定期更新】"+"\r\n"+"現在の会計残高は"+str("{:,}".format(sum))+"円です。") 
+            api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name,text=str(now)+"\r\n"+"【定期更新】"+"\r\n"+"現在の会計残高は"+str("{:,}".format(sum))+"円です。") 
         l.LogWrite("tweet")
         return True
     elif(int('{0:%H}'.format(now))==int(11)):#hourが11時ならfalseにリセット
