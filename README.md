@@ -1,3 +1,3 @@
-# KBIS
-KBISのコードです。　手が空いてるときに説明を書きます。
-後、そこそこの期間、安定して運用出来たら、リポジトリごと譲る予定です
+KBIS
+
+KohkenBalanceInquiryApp
