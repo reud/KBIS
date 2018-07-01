@@ -54,15 +54,21 @@ def CommandReader(command):
 def RootChallenger(user,api):
     #rootコマンドを頼んだuserが正当か判断する。
     #Twitter対応リストのIDの横のセルに「su」と入力すること
+    #7/1ここデバッグしてるので汚い
     TWIT_BOOK_SHEET=GetTwitterSheet()
     exsist=False
     for _row in range(2,MAX_USER,1):
+        print("比較中...{0} and {1}".format(TWIT_BOOK_SHEET.cell(row=_row,column=1).value,user))
         if(str(TWIT_BOOK_SHEET.cell(row=_row,column=1).value)==user):
+            print("エクセルファイルにユーザーがいました。！")
             exsist=True
             if(str(TWIT_BOOK_SHEET.cell(row=_row,column=3).value)=="su"):
+                l.LogWrite("print","SuperUser認証が通りました！")
                 return True
     if(exsist):
         l.LogWrite("FalseSU",user)
+    l.LogWrite("print","SuperUser要求が{0}から来ました。そのユーザーはエクセルファイルにいたか?:{1}。SuperUserではありませんでした。".format(user,exsist))
+    api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name, text="SuperUser要求が来たけどSuperUserじゃなかったです。要求者:{0}".format(user))
     return False
 
 def CheckDirFile():
@@ -161,7 +167,7 @@ def GetTwitterSheet():
     try:
         TWITTER_BOOK=openpyxl.load_workbook(TWITTER_BE_COMPATIBLE_BY_THIS_BOOK)#ツイッターアカウントとメンバーの対応表を開く
     except:
-        print(BOOKNAME++"を開くのに失敗しました。　Push Any Key")
+        print(BOOKNAME+"を開くのに失敗しました。　Push Any Key")
         ans=input()
         sys.exit()
     TWITTER_BOOK_SHEET=TWITTER_BOOK["Sheet1"]
@@ -218,7 +224,7 @@ def DirectMailCheck(directMail,ignoreList,memberList,api):
             TWITTER_BOOK=openpyxl.load_workbook(TWITTER_BE_COMPATIBLE_BY_THIS_BOOK)#ツイッターアカウントとメンバーの対応表を開く
         except:
             print(TWITTER_BOOK+"を開くのに失敗しました。")
-            return ignoreList;
+            return ignoreList
         TWITTER_BOOK_SHEET=TWITTER_BOOK["Sheet1"]
         for t in range(len(ignoreList)):
             if(int(directMail[i].id)==int(ignoreList[t])):
@@ -234,6 +240,10 @@ def DirectMailCheck(directMail,ignoreList,memberList,api):
                     isSent=True
                     command=directMail[i].text.replace("root:","")
                     CommandReader(command)
+                else:
+                    api.PostDirectMessage(screen_name=directMail[i].sender_screen_name,text="すいません！そのコマンドは許可されていません！")
+                    isSent=True
+                    ignore=True
                 ignoreList.append(directMail[i].id)
         elif(directMail[i].text.find("info:")!=0):
             if(not ignore):
