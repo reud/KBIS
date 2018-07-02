@@ -58,8 +58,8 @@ def RootChallenger(user,api):
     TWIT_BOOK_SHEET=GetTwitterSheet()
     exsist=False
     for _row in range(2,MAX_USER,1):
-        print("比較中...{0} and {1}".format(TWIT_BOOK_SHEET.cell(row=_row,column=1).value,user))
-        if(str(TWIT_BOOK_SHEET.cell(row=_row,column=1).value)==user):
+        print("比較中...{0} and {1}".format(TWIT_BOOK_SHEET.cell(row=_row,column=2).value,user))
+        if(str(TWIT_BOOK_SHEET.cell(row=_row,column=2).value)==user):
             print("エクセルファイルにユーザーがいました。！")
             exsist=True
             if(str(TWIT_BOOK_SHEET.cell(row=_row,column=3).value)=="su"):
