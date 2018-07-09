@@ -1,5 +1,6 @@
 # coding:utf-8
 import LogWriterClassVer
+import traceback
 class RootCommand(object):#謎そしてクソコードなのでだれか直して頼む
     def __init__(self,api,memberList,command,arg1='none',arg2='none',arg3='none',arg4='none',arg5='none'):
         self.l=LogWriterClassVer.LogWriterClassVer()
@@ -71,7 +72,7 @@ class RootCommand(object):#謎そしてクソコードなのでだれか直し�
                             if(not(i.twiiterID=="none")):
                                 if(i.money>0):
                                     self.api.PostDirectMessage(screen_name=i.twiiterID,text="【一斉送信】KBISよりお知らせです。\r\n\r\n"+i.name+"さんは現在 "+str(i.money)+"円 を滞納しています。\r\nお早めのお支払をお願い致します。")
-                                if(i.money==0):
+                                elif(i.money==0):
                                     self.api.PostDirectMessage(screen_name=i.twiiterID,text="【一斉送信】KBISよりお知らせです。\r\n\r\n現在"+i.name+"さんの滞納/返金はありません。")
                                 else:
                                     self.api.PostDirectMessage(screen_name=i.twiiterID,text="【一斉送信】KBISよりお知らせです。\r\n"+i.name+"さんには現在 "+str(i.money)+"円 の返金があります。\r\nご都合のよいときに会計担当へお知らせください。")
