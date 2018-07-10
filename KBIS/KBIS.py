@@ -18,3 +18,9 @@ import DataBases
 path='../Tools/237585_個人支払出納管理簿.xlsx'
 l=LogWriterClassVer.LogWriterClassVer()
 db=DataBases.DataBases(path)
+apiR=APIKeyReader.Reader('../KEYS')
+api=apiR.GetApi()
+if(sys.argv[1]=='dev'):
+    devmode=True
+else:
+    devmode=False

@@ -2,20 +2,25 @@
 import sqlite3
 import openpyxl
 import traceback
-
+import os
 
 class DataBases(object):
     def __init__(self, EXCEL_PATH):
         self.MAXGEN = 99
         self.MINGEN = 15
         self.EXCELFILE = EXCEL_PATH
-        self.dbname = 'datawjawqawaawes5e.db'
+        self.dbname = 'temp.db'
+        try:
+            os.remove(self.dbname)
+        except:
+            pass
         self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
+        self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
         self.connect = sqlite3.connect(self.dbname)
         self.cursor = self.connect.cursor()
         create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT)'''
         self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
-        workbook = openpyxl.load_workbook('../Tools/237585_個人支払出納管理簿.xlsx')
+        workbook = openpyxl.load_workbook(self.moneyBook)
         self.cursor.execute(create_table)
         for i in range(self.MINGEN, self.MAXGEN):
             try:
@@ -30,6 +35,7 @@ class DataBases(object):
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
             print(row)
+        self.connect.close()
     def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
         for user in range(1, 300):
@@ -60,6 +66,28 @@ class DataBases(object):
             #
             if(sheet.cell(row=(user + 3), column=2).value ):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
-
-
         return userList
+        def renew(self):
+            os.remove(self.dbname)
+            self.connect = sqlite3.connect(self.dbname)
+            self.cursor = self.connect.cursor()
+            create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT)'''
+            workbook = openpyxl.load_workbook(self.moneyBook)
+            self.cursor.execute(create_table)
+            for i in range(self.MINGEN, self.MAXGEN):
+                try:
+                    sheet = workbook['{0}G'.format(i)]
+                    self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
+                except:
+                    traceback.print_exc()
+                    break
+            if (not sheet): print('null get')
+            print(str(sheet))
+            print('Hello DB')
+            select_sql = 'select * from users'
+            for row in self.cursor.execute(select_sql):
+                print(row)
+            self.connect.close()
+
+
+
