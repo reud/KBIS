@@ -15,12 +15,17 @@ import traceback
 import LogWriterClassVer
 import APIKeyReader
 import DataBases
+import Routine
 path='../Tools/237585_個人支払出納管理簿.xlsx'
+dir=''
 l=LogWriterClassVer.LogWriterClassVer()
 db=DataBases.DataBases(path)
 apiR=APIKeyReader.Reader('../KEYS')
 api=apiR.GetApi()
-if(sys.argv[1]=='dev'):
-    devmode=True
-else:
-    devmode=False
+
+try:
+    print('mode:{0}'.format(sys.argv[1]))
+    routine=Routine.Routine(api,db,True,dir)
+except:
+    routine=Routine.Routine(api,db,False,dir)
+routine.Init()

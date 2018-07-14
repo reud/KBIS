@@ -10,7 +10,7 @@ import webbrowser
 import time
 import datetime
 class LogWriterClassVer(object):
-    def LogWrite(self,type1,arg1="none",arg2="none",arg3="none"):#第一引数はタイプ　第二引数はいろいろ
+    def LogWrite(self,type1="print",arg1="none",arg2="none",arg3="none"):#第一引数はタイプ　第二引数はいろいろ
         try:
             LOGFILE=open("Log.txt",'a')
         except:
