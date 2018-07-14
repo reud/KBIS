@@ -74,7 +74,41 @@ class Routine(object):
                     break#見つけたらfor文ごと終了させる。
         if(len(self.directmails)!=0):#DMを読み取る処理
             print('DMの件数は{0}件です。'.format(len(self.directmails)))
+            return
+        #ここからDMの処理
+        #devmode中はsudo機能とdev機能のどちらもdeveloperが使用可能 sudo calluserは自分に結果を通知
+        #本環境は
+        #権限はdev→sudo→registered→All もイメージ
+        #[info]--情報要求 (registered User)
+        #[register:[苗字] [名前]] 新規登録(All User)
+        #[change:(新しいscreen_name)] ユーザーID変更(registered User)
+        #[dev:speak (saying)] ツイート(developer)   dev only
+        #[sudo:Calluser (arg**)] 絞り込み複数通知   sudo only
+        #[void:(String)] 普通に話しかける用(一回のみ)　(All User)
+        #[conv] (All User) 何回か繰り返す会話用　(全てのコマンドが無視されます)
+        #[exit] (a user -> if use conv) conv使った会話が終了したら
+        #[sudo:reload] データベースを再更新します。   sudo only
+        #[sudo:getDB (arg**)] CallUserと引数は同じで、指定したレコードを取得します。   sudo only
+        #[help]ユーザの権限に合わせた使えるコマンドの案内をします。
+        #[q:(String)] 開発者に通知にバグとか要望とか教えて下さい！
+        for directmail in self.directmails:#最後にignoreListに入れてね
+            if(directmail.text.find("dev:")==0):
+                directmail.text=directmail.text.replace('dev:','')
+                #ここでdevが本当にdeveloperか確認する
+                if(developer_screen_name==directmail.sender_screen_name):
+                    if(directmail.text.find('speak ')==0):#speakの場合　ここの階層に新規コマンドを追加して下さい。
+                        directmail.text=directmail.text.replace('speak ','')
+                        self.api.PostUpdate(directmail.text)
+                else:#developerじゃない場合
+                    self.api.PostDirectMessage('あなたはこのコマンドを実行する権限を持っていません。')
+            if(directmail.text.find("sudo:")==0):
+                pass
+
+
+
+
         else:
             print('DMはありません')
+
 
 
