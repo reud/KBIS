@@ -9,16 +9,15 @@ class DataBases(object):
         self.MAXGEN = 99
         self.MINGEN = 15
         self.EXCELFILE = EXCEL_PATH
-        self.dbname = 'temp.db'
         try:
-            os.remove(self.dbname)
+            os.remove(":memory:")
         except:
             pass
         self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
         self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
-        self.connect = sqlite3.connect(self.dbname)
+        self.connect = sqlite3.connect(":memory:")
         self.cursor = self.connect.cursor()
-        create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT)'''
+        create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
         workbook = openpyxl.load_workbook(self.moneyBook)
         self.cursor.execute(create_table)
@@ -35,7 +34,6 @@ class DataBases(object):
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
             print(row)
-        self.connect.close()
     def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
         for user in range(1, 300):
@@ -67,27 +65,58 @@ class DataBases(object):
             if(sheet.cell(row=(user + 3), column=2).value ):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
         return userList
-        def renew(self):
-            os.remove(self.dbname)
-            self.connect = sqlite3.connect(self.dbname)
-            self.cursor = self.connect.cursor()
-            create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT)'''
-            workbook = openpyxl.load_workbook(self.moneyBook)
-            self.cursor.execute(create_table)
-            for i in range(self.MINGEN, self.MAXGEN):
-                try:
-                    sheet = workbook['{0}G'.format(i)]
-                    self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
-                except:
-                    traceback.print_exc()
-                    break
-            if (not sheet): print('null get')
-            print(str(sheet))
-            print('Hello DB')
-            select_sql = 'select * from users'
-            for row in self.cursor.execute(select_sql):
-                print(row)
-            self.connect.close()
+    def renew(self):
+        self.cursor = self.connect.cursor()
+        #create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername))'''
+        workbook = openpyxl.load_workbook(self.moneyBook)
+        self.cursor.execute(create_table)
+        for i in range(self.MINGEN, self.MAXGEN):
+            try:
+                sheet = workbook['{0}G'.format(i)]
+                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
+            except:
+                traceback.print_exc()
+                break
+        if (not sheet): print('null get')
+        print(str(sheet))
+        print('Hello DB')
+        select_sql = 'select * from users'
+        for row in self.cursor.execute(select_sql):
+            print(row)
+    def Search(self,word1:str,word2:str)-> list:
+        self.cursor=self.connect.cursor()
+        createTwitterUserTable='''create table if not exists TwitterExistsUser(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
+        self.cursor.execute(createTwitterUserTable)
+        uReturnist=[]
+        select_sql = '''select * from users where twittername is not null'''
+        print('\n\n\n\nsearch start'+str(self.cursor.execute(select_sql)))
+        for row in self.cursor.execute(select_sql):
+            uReturnist.append(row)
+            #print(row)
+        select_sql='''insert or ignore into TwitterExistsUser(gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'''
+        self.cursor.executemany(select_sql,uReturnist)
+        self.cursor.executemany(select_sql,uReturnist)
+        select_sql = '''select * from TwitterExistsUser'''
+        for row in self.cursor.execute(select_sql):
+            print(row)
+        self.connect.close()
+        print('FinishOutput')
 
+        return
+
+        returnList=[]
+        #(word1,word2)
+        #(at,本名 or twitterID or all)
+        #(Lthan,money)
+        #(Hthan,money)
+        #(equals,money)
+        if(word1=='at'):
+            if(word2=='all'):
+                at_all_sql='''select * from TwitterExistsUser'''
+
+                pass
+
+
+        pass
 
 

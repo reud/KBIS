@@ -99,6 +99,7 @@ class Routine(object):
                     if(directmail.text.find('speak ')==0):#speakの場合　ここの階層に新規コマンドを追加して下さい。
                         directmail.text=directmail.text.replace('speak ','')
                         self.api.PostUpdate(directmail.text)
+
                 else:#developerじゃない場合
                     self.api.PostDirectMessage('あなたはこのコマンドを実行する権限を持っていません。')
             if(directmail.text.find("sudo:")==0):
