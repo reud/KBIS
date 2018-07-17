@@ -20,7 +20,7 @@ path='../Tools/237585_個人支払出納管理簿.xlsx'
 dir=''
 l=LogWriterClassVer.LogWriterClassVer()
 db=DataBases.DataBases(path)
-db.Search('At','All')
+db.Search('at','上林 篤史')
 apiR=APIKeyReader.Reader('../KEYS')
 api=apiR.GetApi()
 

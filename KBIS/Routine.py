@@ -17,7 +17,8 @@ class Routine(object):
         if(not self.devmode):
             self.api.PostDirectMessage(text="KBIS起動",screen_name=self.api.VerifyCredentials().screen_name)
         else:
-            self.api.PostDirectMessage(text="(dev)KBIS起動",screen_name=developer_screen_name)
+            #self.api.PostDirectMessage(text="(dev)KBIS起動",screen_name=developer_screen_name)
+            pass
         self.logwriter=LogWriterClassVer.LogWriterClassVer()
         self.logwriter.LogWrite("print","KBISが起動しました。devmode:{0}".format(self.devmode))
         self.ignoreList = []

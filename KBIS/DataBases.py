@@ -99,10 +99,9 @@ class DataBases(object):
         select_sql = '''select * from TwitterExistsUser'''
         for row in self.cursor.execute(select_sql):
             print(row)
-        self.connect.close()
         print('FinishOutput')
 
-        return
+
 
         returnList=[]
         #(word1,word2)
@@ -113,10 +112,58 @@ class DataBases(object):
         if(word1=='at'):
             if(word2=='all'):
                 at_all_sql='''select * from TwitterExistsUser'''
+                for data in self.cursor.execute(at_all_sql):
+                    returnList.append(data)
+                return returnList
+            else:#本名 or twitterID
+                print('{0}をTwitterIDから検索中...'.format(word2))
+                twitterID_sql='''select twittername from TwitterExistsUser'''
+                for data in self.cursor.execute(twitterID_sql):
+                    #なんかカッコとかついてるので取る
+                    ddata0=str(data).replace('(','')
+                    ddata1=ddata0.replace(')','')
+                    ddata2=ddata1.replace('\'','')
+                    ddata_final=ddata2.replace(',','')
+                    #ここでddata_finalがアレ
+                    print(ddata_final)
+                    if(ddata_final==word2):
+                        print('twitterIDが一致しました。 そのユーザを取得します。')
 
-                pass
-
-
-        pass
-
+                        userSearch_sql='''select * from TwitterExistsUser where twittername='{0}' '''.format(word2)
+                        if (not self.cursor.execute(userSearch_sql)):
+                            raise ValueError('kasu')
+                        reacher=False
+                        for i in self.cursor.execute(userSearch_sql):
+                            if(reacher):
+                                raise AssertionError('二つ以上の要素を持ってしまう致命的なエラー')
+                            returnList.append(i)
+                            print(i)
+                            reacher=True
+                        return returnList
+                print('TwitterIDは一致しませんでした。本名から検索します。')
+                #
+                print('{0}を本名から検索中...'.format(word2))
+                realname_sql='''select realname from TwitterExistsUser'''
+                for data in self.cursor.execute(realname_sql):
+                    #なんかカッコとかついてるので取る
+                    ddata0=str(data).replace('(','')
+                    ddata1=ddata0.replace(')','')
+                    ddata2=ddata1.replace('\'','')
+                    ddata_final=ddata2.replace(',','')
+                    #ここでddata_finalがアレ
+                    print(ddata_final)
+                    if(ddata_final==word2):
+                        print('本名が一致しました。 そのユーザを取得します。')
+                        userSearch_sql='''select * from TwitterExistsUser where realname='{0}' '''.format(word2)
+                        if (not self.cursor.execute(userSearch_sql)):
+                            raise ValueError('kasu')
+                        reacher=False
+                        for i in self.cursor.execute(userSearch_sql):
+                            if(reacher):
+                                raise AssertionError('二つ以上の要素を持ってしまう致命的なエラー')
+                            returnList.append(i)
+                            print(i)
+                            reacher=True
+                        return returnList
+        raise ValueError('一致するものが見つかりませんでした。')
 
