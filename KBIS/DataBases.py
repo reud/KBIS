@@ -25,8 +25,7 @@ class DataBases(object):
             try:
                 sheet = workbook['{0}G'.format(i)]
                 self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
-            except:
-                traceback.print_exc()
+            except KeyError:
                 break
         if (not sheet): print('null get')
         print(str(sheet))
@@ -43,9 +42,8 @@ class DataBases(object):
                 if (sheet.cell(row=(user + 3), column=debt).value):
                     try:
                         sum += int(sheet.cell(row=(user + 3), column=debt).value)
-                    except:
-                        traceback.print_exc()
-                        print('May error is datetime its ok')
+                    except TypeError:
+                        pass
             # Twitterアカウントとの結びつけ
             twitterbook = openpyxl.load_workbook(self.twitterBook)
             sheetTB = twitterbook['Sheet1']
@@ -65,44 +63,31 @@ class DataBases(object):
             if(sheet.cell(row=(user + 3), column=2).value ):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
         return userList
-    def renew(self):
-        self.cursor = self.connect.cursor()
-        #create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername))'''
+    def renew(self):#一回全部消すか・・・
         workbook = openpyxl.load_workbook(self.moneyBook)
-        self.cursor.execute(create_table)
+        select_sql = '''insert or ignore into users(gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'''
         for i in range(self.MINGEN, self.MAXGEN):
             try:
                 sheet = workbook['{0}G'.format(i)]
-                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
-            except:
-                traceback.print_exc()
+                self.cursor.executemany(select_sql, self.CreateUsersFromSheet(sheet, i))
+            except KeyError:
                 break
-        if (not sheet): print('null get')
-        print(str(sheet))
-        print('Hello DB')
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
-            print(row)
+            pass
     def Search(self,word1:str,word2:str)-> list:
-        self.cursor=self.connect.cursor()
         createTwitterUserTable='''create table if not exists TwitterExistsUser(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.cursor.execute(createTwitterUserTable)
         uReturnist=[]
         select_sql = '''select * from users where twittername is not null'''
-        print('\n\n\n\nsearch start'+str(self.cursor.execute(select_sql)))
         for row in self.cursor.execute(select_sql):
             uReturnist.append(row)
             #print(row)
         select_sql='''insert or ignore into TwitterExistsUser(gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'''
         self.cursor.executemany(select_sql,uReturnist)
-        self.cursor.executemany(select_sql,uReturnist)
         select_sql = '''select * from TwitterExistsUser'''
         for row in self.cursor.execute(select_sql):
-            print(row)
-        print('FinishOutput')
-
-
-
+            pass
         returnList=[]
         #(word1,word2)
         #(at,本名 or twitterID or all)
@@ -125,7 +110,6 @@ class DataBases(object):
                     ddata2=ddata1.replace('\'','')
                     ddata_final=ddata2.replace(',','')
                     #ここでddata_finalがアレ
-                    print(ddata_final)
                     if(ddata_final==word2):
                         print('twitterIDが一致しました。 そのユーザを取得します。')
 
@@ -151,7 +135,6 @@ class DataBases(object):
                     ddata2=ddata1.replace('\'','')
                     ddata_final=ddata2.replace(',','')
                     #ここでddata_finalがアレ
-                    print(ddata_final)
                     if(ddata_final==word2):
                         print('本名が一致しました。 そのユーザを取得します。')
                         userSearch_sql='''select * from TwitterExistsUser where realname='{0}' '''.format(word2)
@@ -165,5 +148,17 @@ class DataBases(object):
                             print(i)
                             reacher=True
                         return returnList
+        if(word1=='Lthan' or word1=='Hthan'):
+            if(word1=='Lthan'):
+                comparison='<'
+            else:
+                comparison='>'
+            if(type(word2) is str):
+                raise ValueError('SQLインジェクション的な操作は禁止されています。\n引数を確認して下さい。')
+            call_sql=f'''select * from TwitterExistsUser where money{comparison}{word2}'''
+            print(call_sql)
+            for i in self.cursor.execute(call_sql):
+                print(i)
+            return
         raise ValueError('一致するものが見つかりませんでした。')
 

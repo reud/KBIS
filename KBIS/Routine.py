@@ -58,8 +58,9 @@ class Routine(object):
         return
 
     def GoRoutine(self):
-        time.sleep(60)
-        self.DirectMailReader()
+        while(True):
+            time.sleep(20)
+            self.DirectMailReader()
         pass
     def Init(self):
         self.FirstRoutine()
@@ -97,12 +98,14 @@ class Routine(object):
                 directmail.text=directmail.text.replace('dev:','')
                 #ここでdevが本当にdeveloperか確認する
                 if(developer_screen_name==directmail.sender_screen_name):
-                    if(directmail.text.find('speak ')==0):#speakの場合　ここの階層に新規コマンドを追加して下さい。
+                    if(directmail.text.find('speak ')==0):#speakの場合　ここの階層に新規コマンドを追加して下さい。 ex. dev:speak HelloWorld
                         directmail.text=directmail.text.replace('speak ','')
-                        self.api.PostUpdate(directmail.text)
-
+                        if(not self.devmode):
+                            self.api.PostUpdate(directmail.text)
+                        else:
+                            print(f'speakコマンド:{directmail.text}')
                 else:#developerじゃない場合
-                    self.api.PostDirectMessage('あなたはこのコマンドを実行する権限を持っていません。')
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
             if(directmail.text.find("sudo:")==0):
                 pass
 
