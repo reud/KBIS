@@ -76,7 +76,6 @@ class Routine(object):
                     break#見つけたらfor文ごと終了させる。
         if(len(self.directmails)!=0):#DMを読み取る処理
             print('DMの件数は{0}件です。'.format(len(self.directmails)))
-            return
         #ここからDMの処理
         #devmode中はsudo機能とdev機能のどちらもdeveloperが使用可能 sudo calluserは自分に結果を通知
         #本環境は
@@ -94,6 +93,7 @@ class Routine(object):
         #[help]ユーザの権限に合わせた使えるコマンドの案内をします。
         #[q:(String)] 開発者に通知にバグとか要望とか教えて下さい！
         for directmail in self.directmails:#最後にignoreListに入れてね
+            print(f'DirectMessageの内容{directmail.text}')
             if(directmail.text.find("dev:")==0):
                 directmail.text=directmail.text.replace('dev:','')
                 #ここでdevが本当にdeveloperか確認する
@@ -106,6 +106,21 @@ class Routine(object):
                             print(f'speakコマンド:{directmail.text}')
                 else:#developerじゃない場合
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
+            if(directmail.text.find("sudo:")==0):
+                directmail.text=directmail.text.replace('sudo:','')
+                authority=False
+                #ここから権限のチェック　正しければauthority=Trueになる。
+                if(self.devmode):
+                    if(developer_screen_name==directmail.sender_screen_name):
+                        authority=True
+                for i in self.database.Search('get','root'):
+                    for strings in i:#ここから未テスト
+                        if(strings==directmail.sender_screen_name):
+                            authority=True
+                #ここまで
+                if(authority):
+                    pass
+
             if(directmail.text.find("sudo:")==0):
                 pass
 

@@ -25,6 +25,8 @@ db.Search('Hthan',50000)
 db.Search('Lthan',1)
 db.renew()
 db.Search('Lthan',10)
+for i in db.Search('get','root'):
+    print(i)
 apiR=APIKeyReader.Reader('../KEYS')
 api=apiR.GetApi()
 

@@ -48,17 +48,14 @@ class DataBases(object):
             twitterbook = openpyxl.load_workbook(self.twitterBook)
             sheetTB = twitterbook['Sheet1']
             exist = False
-            authorityExist = False
+            authority = None
             for i in range(1, 999):
                 if (sheet.cell(row=(user + 3), column=2).value == sheetTB.cell(row=(i+1), column=1).value):
                     twitterName = sheetTB.cell(row=(i+1), column=2).value
-                    if (sheetTB.cell(row=i, column=3).value):
-                        authority = sheetTB.cell(row=i, column=3).value
-                        authorityExist = True
+                    if (sheetTB.cell(row=(i+1), column=3).value):
+                        authority = sheetTB.cell(row=(i+1), column=3).value
                     exist = True
 
-            if (not exist): twitterName = 'none'
-            if (not authorityExist): authority = 'none'
             #
             if(sheet.cell(row=(user + 3), column=2).value ):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
@@ -94,6 +91,7 @@ class DataBases(object):
         #(Lthan,money)
         #(Hthan,money)
         #(equals,money)
+        #(get,root)
         if(word1=='at'):
             if(word2=='all'):
                 at_all_sql='''select * from TwitterExistsUser'''
@@ -112,7 +110,6 @@ class DataBases(object):
                     #ここでddata_finalがアレ
                     if(ddata_final==word2):
                         print('twitterIDが一致しました。 そのユーザを取得します。')
-
                         userSearch_sql='''select * from TwitterExistsUser where twittername='{0}' '''.format(word2)
                         if (not self.cursor.execute(userSearch_sql)):
                             raise ValueError('kasu')
@@ -121,7 +118,6 @@ class DataBases(object):
                             if(reacher):
                                 raise AssertionError('二つ以上の要素を持ってしまう致命的なエラー')
                             returnList.append(i)
-                            print(i)
                             reacher=True
                         return returnList
                 print('TwitterIDは一致しませんでした。本名から検索します。')
@@ -145,7 +141,6 @@ class DataBases(object):
                             if(reacher):
                                 raise AssertionError('二つ以上の要素を持ってしまう致命的なエラー')
                             returnList.append(i)
-                            print(i)
                             reacher=True
                         return returnList
         if(word1=='Lthan' or word1=='Hthan'):
@@ -158,7 +153,14 @@ class DataBases(object):
             call_sql=f'''select * from TwitterExistsUser where money{comparison}{word2}'''
             print(call_sql)
             for i in self.cursor.execute(call_sql):
-                print(i)
-            return
+                returnList.append(i)
+            return returnList
+        if(word1=='get'):
+            if(word2=='root'):
+                select_sql='''select * from TwitterExistsUser where authority=='su' '''
+                print(select_sql)
+                for i in self.cursor.execute(select_sql):
+                    returnList.append(i)
+                return returnList
         raise ValueError('一致するものが見つかりませんでした。')
 
