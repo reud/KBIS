@@ -84,7 +84,7 @@ class Routine(object):
         #[register:[苗字] [名前]] 新規登録(All User)
         #[change:(新しいscreen_name)] ユーザーID変更(registered User)
         #[dev:speak (saying)] ツイート(developer)   dev only
-        #[sudo:Calluser (arg**)] 絞り込み複数通知   sudo only
+        #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only
         #[void:(String)] 普通に話しかける用(一回のみ)　(All User)
         #[conv] (All User) 何回か繰り返す会話用　(全てのコマンドが無視されます)
         #[exit] (a user -> if use conv) conv使った会話が終了したら
@@ -119,7 +119,37 @@ class Routine(object):
                             authority=True
                 #ここまで
                 if(authority):
+                    if(directmail.text.find('getDB')==0):
+                        directmail.text=directmail.text.replace('getDB','')
+                        splitedWords=directmail.split()
+                        if(splitedWords[0]=='Lthan' or splitedWords[0]=='Hthan'):
+                            pass#途中
+                    if(directmail.text.find('CallUser ')==0):
+                        directmail.text=directmail.text.replace('CallUser ','')
+                        splitedWords=directmail.split(' ')
+                        if(splitedWords[0]=='Lthan' or splitedWords[0]=='Hthan'):
+                            try:
+                                number=int(splitedWords[1])
+                                lists=self.database.Search(splitedWords[0],number)
+                                if(self.devmode):
+                                    for i in lists:
+                                        print(i+'にCallUser要求を行いました(dev)')
+                                else:
+                                    #ここにCallUer要求を行う。
+                                    pass
+                            except:
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
+
+                        else:
+                             self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg1. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
+                    if(directmail.text.find('reload')==0):
+                        self.database.renew()
+
+
                     pass
+                else:
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
+
 
             if(directmail.text.find("sudo:")==0):
                 pass

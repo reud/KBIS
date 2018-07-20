@@ -61,17 +61,35 @@ class DataBases(object):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
         return userList
     def renew(self):#一回全部消すか・・・
+        delete_usersql='''drop table users'''
+        delete_twittersql='''drop table TwitterExistsUser'''
+        self.cursor.execute(delete_usersql)
+        self.cursor.execute(delete_twittersql)
+        create_table = '''create table if not exists users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
+        self.cursor.execute(create_table)
+        self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
+        createTwitterUserTable='''create table if not exists TwitterExistsUser(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
+        self.cursor.execute(createTwitterUserTable)
+
         workbook = openpyxl.load_workbook(self.moneyBook)
-        select_sql = '''insert or ignore into users(gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'''
         for i in range(self.MINGEN, self.MAXGEN):
             try:
                 sheet = workbook['{0}G'.format(i)]
-                self.cursor.executemany(select_sql, self.CreateUsersFromSheet(sheet, i))
+                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
             except KeyError:
                 break
+        print('ユーザ全体のリストを表示します。')
+        for i in self.cursor.execute('''select * from users'''):
+            print(i)
+        twitterlist=self.Search('at','all')
+        print('Twitterユーザのテーブルを更新しています・・・')
+        for i in twitterlist:
+            print(i)
+        print('Twitterユーザのテーブルの更新が完了しました。')
+
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
-            pass
+            print(row)
     def Search(self,word1:str,word2:str)-> list:
         createTwitterUserTable='''create table if not exists TwitterExistsUser(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.cursor.execute(createTwitterUserTable)
