@@ -1,17 +1,27 @@
+# encoding: utf-8
 import  twitter
 import  DataBases
 import WatchLogReader
 import  LogWriterClassVer
 import  time
+import  WordBox
 developer_screen_name='r_e_u_d'
 import os
+import traceback
 class Routine(object):
     def __init__(self,api:twitter.Api,db:DataBases.DataBases,devmode:bool,dir:str):
         """:type : twitter.Api"""
+        self.wordbox=WordBox.WordBox()
         self.database=db
         self.api=api
         self.devmode=devmode
         self.dir=dir #use for ignoreList
+    def DatabaseOutPutter(self,arg1:str,arg2):#KBISにデータベースの検索結果を載せる関数 (ここでは文字列を返す)
+        lists=self.database.Search(arg1,arg2)
+        line=f'{len(lists)}個の要素が検索されました。\r\n'
+        for list in lists:
+            line+=f'{list}\r\n'
+        return line
     def FirstRoutine(self):
         print('start first routine')
         if(not self.devmode):
@@ -84,15 +94,19 @@ class Routine(object):
         #[register:[苗字] [名前]] 新規登録(All User)
         #[change:(新しいscreen_name)] ユーザーID変更(registered User)
         #[dev:speak (saying)] ツイート(developer)   dev only
-        #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only
-        #[void:(String)] 普通に話しかける用(一回のみ)　(All User)
+        #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only (Hthan と Lthanのみ)
+        #[m:(String)] 普通に話しかける用(一回のみ)　(All User)
         #[conv] (All User) 何回か繰り返す会話用　(全てのコマンドが無視されます)
         #[exit] (a user -> if use conv) conv使った会話が終了したら
         #[sudo:reload] データベースを再更新します。   sudo only
-        #[sudo:getDB (arg**)] CallUserと引数は同じで、指定したレコードを取得します。   sudo only
+        #[sudo:getDB (arg**)] CallUserと引数は同じで、指定したレコードを取得します。   sudo only fin
         #[help]ユーザの権限に合わせた使えるコマンドの案内をします。
         #[q:(String)] 開発者に通知にバグとか要望とか教えて下さい！
-        for directmail in self.directmails:#最後にignoreListに入れてね
+        #
+        #ignoreListに入れる
+
+        for directmail in self.directmails:
+            self.ignoreList.append(directmail.id)
             print(f'DirectMessageの内容{directmail.text}')
             if(directmail.text.find("dev:")==0):
                 directmail.text=directmail.text.replace('dev:','')
@@ -121,24 +135,43 @@ class Routine(object):
                 if(authority):
                     if(directmail.text.find('getDB')==0):
                         directmail.text=directmail.text.replace('getDB','')
-                        splitedWords=directmail.split()
+                        splitedWords=directmail.text.split()
                         if(splitedWords[0]=='Lthan' or splitedWords[0]=='Hthan'):
+                            try:
+                                number=int(splitedWords[1])
+                                line=self.DatabaseOutPutter(splitedWords[0],number)
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=line)
+                            except:
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
+                                traceback.print_exc()
                             pass#途中
                     if(directmail.text.find('CallUser ')==0):
                         directmail.text=directmail.text.replace('CallUser ','')
-                        splitedWords=directmail.split(' ')
+                        splitedWords=directmail.text.split(' ')
                         if(splitedWords[0]=='Lthan' or splitedWords[0]=='Hthan'):
                             try:
                                 number=int(splitedWords[1])
                                 lists=self.database.Search(splitedWords[0],number)
                                 if(self.devmode):
-                                    for i in lists:
-                                        print(i+'にCallUser要求を行いました(dev)')
+                                    for list in lists:
+                                        print(list+f'にCallUser要求を行いました(dev)\r\n{self.wordbox.GetString(str(list[1]),int(list[3]),True,directmail.text)}')
                                 else:
                                     #ここにCallUer要求を行う。
+                                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f' {self.database.Search("at",directmail.sender_screen_name)[3]} 円です！')
                                     pass
                             except:
+                                traceback.print_exc()
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
+                        elif(splitedWords[0]=='at'):
+                            if(len(self.database.Search('at',splitedWords[1]))!=0):
+                                for list in self.database.Search('at',splitedWords[1]):
+                                    if(self.devmode):
+                                        print(list+f'にCallUser要求を行いました(dev)\r\n{self.wordbox.GetString(str(list[1]),int(list[3]),True,directmail.text)}')
+                                    else:
+                                        #CallUser要求
+                                        pass
+                            else:
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='要素が見つかりませんでした。')
 
                         else:
                              self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg1. arg1={splitedWords[0]} and arg2={splitedWords[1]}')

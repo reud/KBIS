@@ -1,4 +1,4 @@
-﻿# coding:utf-8
+﻿# encoding:utf-8
 from __future__ import unicode_literals
 #フォローは手作業でお願いしますね・・・
 import twitter
@@ -20,13 +20,6 @@ path='../Tools/237585_個人支払出納管理簿.xlsx'
 dir=''
 l=LogWriterClassVer.LogWriterClassVer()
 db=DataBases.DataBases(path)
-db.Search('Hthan',25000)
-db.Search('Hthan',50000)
-db.Search('Lthan',1)
-db.renew()
-db.Search('Lthan',10)
-db.renew()
-db.Search('at','all')
 for i in db.Search('get','root'):
     print(i)
 apiR=APIKeyReader.Reader('../KEYS')

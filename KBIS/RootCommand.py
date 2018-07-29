@@ -1,4 +1,4 @@
-# coding:utf-8
+# encoding:utf-8
 import LogWriterClassVer
 import traceback
 class RootCommand(object):#謎そしてクソコードなのでだれか直して頼む
