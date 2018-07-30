@@ -181,4 +181,30 @@ class DataBases(object):
                     returnList.append(i)
                 return returnList
         raise ValueError('一致するものが見つかりませんでした。')
+    def RegisterOrChanger(self,Rname:str,NewTwitterName:str,register=False)-> str:
+        wb=openpyxl.load_workbook(self.twitterBook)
+        sheet=wb['Sheet1']
+        for i in range(2,999):
+            print(sheet.cell(row=i,column=1).value)
+            if(sheet.cell(row=i,column=1).value==Rname):
+                if(register):
+                    if(sheet.cell(row=i,column=2).value==None):
+                        sheet.cell(row=i,column=2,value=NewTwitterName)
+                        wb.save(self.twitterBook)
+                        return '登録完了しました！'
+
+                    else:
+                        wb.save(self.twitterBook)
+                        return 'すでに登録されています。infoコマンドをお使いください。'
+                else:
+                    if(sheet.cell(row=i,column=2).value!=None):
+                        sheet.cell(row=i,column=2,value=NewTwitterName)
+                        wb.save(self.twitterBook)
+                        return '登録完了しました！'
+                    else:
+                        wb.save(self.twitterBook)
+                        return 'あなたのデータは登録されていません。registerコマンドを使用してデータベースに登録を行ってください。'
+        wb.save(self.twitterBook)
+        return 'あなたが誰か判別することが出来ませんでした。管理者に確認することをお勧め致します。'
+
 

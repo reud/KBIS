@@ -16,6 +16,7 @@ import LogWriterClassVer
 import APIKeyReader
 import DataBases
 import Routine
+import WordBox
 path='../Tools/237585_個人支払出納管理簿.xlsx'
 dir=''
 l=LogWriterClassVer.LogWriterClassVer()
@@ -24,10 +25,11 @@ for i in db.Search('get','root'):
     print(i)
 apiR=APIKeyReader.Reader('../KEYS')
 api=apiR.GetApi()
-
+w=WordBox.WordBox()
 try:
     print('mode:{0}'.format(sys.argv[1]))
     routine=Routine.Routine(api,db,True,dir)
 except:
     routine=Routine.Routine(api,db,False,dir)
+    pass
 routine.Init()

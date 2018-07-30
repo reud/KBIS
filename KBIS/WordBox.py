@@ -30,4 +30,5 @@ class WordBox(object):
             cubox.append((f'KBISからのお知らせです。{name} さんは告知の基準「{command}」に該当しています。\r\n'))
             cubox.append(f'KBISより、条件:{command}を満たす方へ通知です。\r\n')
             returnStr= cubox[calluser_random_value] +returnStr
+
         return  returnStr

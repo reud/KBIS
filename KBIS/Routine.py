@@ -93,8 +93,8 @@ class Routine(object):
         #[info]--情報要求 (registered User)
         #[register:[苗字] [名前]] 新規登録(All User)
         #[change:(新しいscreen_name)] ユーザーID変更(registered User)
-        #[dev:speak (saying)] ツイート(developer)   dev only
-        #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only (Hthan と Lthanのみ)
+        #[dev:speak (saying)] ツイート(developer)   dev only fin
+        #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only (Hthan と Lthanのみ) fin
         #[m:(String)] 普通に話しかける用(一回のみ)　(All User)
         #[conv] (All User) 何回か繰り返す会話用　(全てのコマンドが無視されます)
         #[exit] (a user -> if use conv) conv使った会話が終了したら
@@ -115,12 +115,12 @@ class Routine(object):
                     if(directmail.text.find('speak ')==0):#speakの場合　ここの階層に新規コマンドを追加して下さい。 ex. dev:speak HelloWorld
                         directmail.text=directmail.text.replace('speak ','')
                         if(not self.devmode):
-                            self.api.PostUpdate(directmail.text)
+                            self.api.PostUpdate(text=directmail.text)
                         else:
                             print(f'speakコマンド:{directmail.text}')
                 else:#developerじゃない場合
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
-            if(directmail.text.find("sudo:")==0):
+            elif(directmail.text.find("sudo:")==0):
                 directmail.text=directmail.text.replace('sudo:','')
                 authority=False
                 #ここから権限のチェック　正しければauthority=Trueになる。
@@ -154,25 +154,35 @@ class Routine(object):
                                 lists=self.database.Search(splitedWords[0],number)
                                 if(self.devmode):
                                     for list in lists:
-                                        print(list+f'にCallUser要求を行いました(dev)\r\n{self.wordbox.GetString(str(list[1]),int(list[3]),True,directmail.text)}')
+                                        name=str(list[1])
+                                        money=int(list[3])
+                                        print(f'CallUser要求を行いました(dev)\r\n{self.wordbox.GetString(name,money,True,directmail.text)}')
                                 else:
-                                    #ここにCallUer要求を行う。
-                                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f' {self.database.Search("at",directmail.sender_screen_name)[3]} 円です！')
-                                    pass
+                                    for list in lists:
+                                        name=str(list[1])
+                                        money=int(list[3])
+                                        dmTo=str(list[2])
+                                        self.api.PostDirectMessage(screen_name=dmTo,text=self.wordbox.GetString(name,money,True,directmail.text))
                             except:
-                                traceback.print_exc()
-                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'検索結果が0または引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                         elif(splitedWords[0]=='at'):
-                            if(len(self.database.Search('at',splitedWords[1]))!=0):
+                            try:
                                 for list in self.database.Search('at',splitedWords[1]):
                                     if(self.devmode):
-                                        print(list+f'にCallUser要求を行いました(dev)\r\n{self.wordbox.GetString(str(list[1]),int(list[3]),True,directmail.text)}')
+                                        print(list)
+                                        name=str(list[1])
+                                        money=int(list[3])
+                                        print(list+f'にCallUser要求を行いました(dev)\r\n{self.wordbox.GetString(name,money,True,directmail.text)}')
                                     else:
-                                        #CallUser要求
+                                        name = str(list[1])
+                                        money = int(list[3])
+                                        dmTo = str(list[2])
+                                        self.api.PostDirectMessage(screen_name=dmTo,
+                                                                    text=self.wordbox.GetString(name, money, True,
+                                                                                                   directmail.text))
                                         pass
-                            else:
-                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='要素が見つかりませんでした。')
-
+                            except:
+                                self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='引数が不正か、要素が見つかりませんでした。')
                         else:
                              self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg1. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                     if(directmail.text.find('reload')==0):
@@ -182,7 +192,21 @@ class Routine(object):
                     pass
                 else:
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
-
+            else:
+                if(directmail.text.find('info')==0):
+                    try:
+                        for list in self.database.Search(('at'),directmail.sender_screen_name):
+                            name = str(list[1])
+                            money = int(list[3])
+                            dmTo = str(list[2])
+                            self.api.PostDirectMessage(screen_name=dmTo,text=self.wordbox.GetString(name,money))
+                    except:
+                        self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたのデータは発見出来ませんでした。\r\n今までにKBISを使ったことない場合は\r\nregister:[苗字] [名前]\r\nと入力しKBISのデータベースに登録を行ってください。')
+                if(directmail.text.find('register:')==0):
+                    directmail.text=directmail.text.replace('register:','')
+                    sendstr=self.database.RegisterOrChanger(directmail.text,directmail.sender_screen_name,True)
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=sendstr)
+                    self.database.renew()
 
             if(directmail.text.find("sudo:")==0):
                 pass
