@@ -89,19 +89,17 @@ class Routine(object):
         #ここからDMの処理
         #devmode中はsudo機能とdev機能のどちらもdeveloperが使用可能 sudo calluserは自分に結果を通知
         #本環境は
-        #権限はdev→sudo→registered→All もイメージ
-        #[info]--情報要求 (registered User)
-        #[register:[苗字] [名前]] 新規登録(All User)
-        #[change:(新しいscreen_name)] ユーザーID変更(registered User)
+        #権限はdev→sudo→registered→All のイメージ
+        #[info]--情報要求 (registered User) fin
+        #[register:[苗字] [名前]] 新規登録(All User) fin
+        #[change:(新しいscreen_name)] ユーザーID変更(registered User) fin
         #[dev:speak (saying)] ツイート(developer)   dev only fin
         #[sudo:CallUser (arg**)] 絞り込み複数通知   sudo only (Hthan と Lthanのみ) fin
         #[m:(String)] 普通に話しかける用(一回のみ)　(All User)
-        #[conv] (All User) 何回か繰り返す会話用　(全てのコマンドが無視されます)
-        #[exit] (a user -> if use conv) conv使った会話が終了したら
-        #[sudo:reload] データベースを再更新します。   sudo only
+        #[sudo:reload] データベースを再更新します。   sudo only　fin
         #[sudo:getDB (arg**)] CallUserと引数は同じで、指定したレコードを取得します。   sudo only fin
-        #[help]ユーザの権限に合わせた使えるコマンドの案内をします。
-        #[q:(String)] 開発者に通知にバグとか要望とか教えて下さい！
+        #[help]ユーザの権限に合わせた使えるコマンドの案内をします。　
+        #[q:(String)] 開発者に通知します。バグとか要望とか教えて下さい！
         #
         #ignoreListに入れる
 
@@ -145,7 +143,7 @@ class Routine(object):
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                                 traceback.print_exc()
                             pass#途中
-                    if(directmail.text.find('CallUser ')==0):
+                    elif(directmail.text.find('CallUser ')==0):
                         directmail.text=directmail.text.replace('CallUser ','')
                         splitedWords=directmail.text.split(' ')
                         if(splitedWords[0]=='Lthan' or splitedWords[0]=='Hthan'):
@@ -185,11 +183,8 @@ class Routine(object):
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='引数が不正か、要素が見つかりませんでした。')
                         else:
                              self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg1. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
-                    if(directmail.text.find('reload')==0):
+                    elif(directmail.text.find('reload')==0):
                         self.database.renew()
-
-
-                    pass
                 else:
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたはこのコマンドを実行する権限を持っていません。')
             else:
@@ -202,12 +197,20 @@ class Routine(object):
                             self.api.PostDirectMessage(screen_name=dmTo,text=self.wordbox.GetString(name,money))
                     except:
                         self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='あなたのデータは発見出来ませんでした。\r\n今までにKBISを使ったことない場合は\r\nregister:[苗字] [名前]\r\nと入力しKBISのデータベースに登録を行ってください。')
-                if(directmail.text.find('register:')==0):
+                elif(directmail.text.find('register:')==0):
                     directmail.text=directmail.text.replace('register:','')
                     sendstr=self.database.RegisterOrChanger(directmail.text,directmail.sender_screen_name,True)
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=sendstr)
                     self.database.renew()
-
+                elif(directmail.text.find('change:')==0):
+                    directmail.text=directmail.text.replace('change:','')
+                    sendstr=self.database.RegisterOrChanger(directmail.sender_screen_name,directmail.text)
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=sendstr)
+                    self.database.renew()
+                elif(directmail.text.find('m:')==0):
+                    #普通に会話なのでなんもしなくていいんじゃない？
+                    pass
+                
             if(directmail.text.find("sudo:")==0):
                 pass
 
