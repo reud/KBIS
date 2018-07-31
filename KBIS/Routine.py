@@ -69,7 +69,7 @@ class Routine(object):
 
     def GoRoutine(self):
         while(True):
-            time.sleep(20)
+            time.sleep(59)
             self.DirectMailReader()
         pass
     def Init(self):
@@ -165,7 +165,7 @@ class Routine(object):
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'検索結果が0または引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                         elif(splitedWords[0]=='at'):
                             try:
-                                for list in self.database.Search('at',splitedWords[1]):
+                                for list in self.database.Search('at',directmail.text.replace('at ','')):
                                     if(self.devmode):
                                         print(list)
                                         name=str(list[1])

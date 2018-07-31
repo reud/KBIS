@@ -17,10 +17,9 @@ import APIKeyReader
 import DataBases
 import Routine
 import WordBox
-path='../Tools/237585_個人支払出納管理簿.xlsx'
 dir=''
 l=LogWriterClassVer.LogWriterClassVer()
-db=DataBases.DataBases(path)
+db=DataBases.DataBases()
 for i in db.Search('get','root'):
     print(i)
 apiR=APIKeyReader.Reader('../KEYS')

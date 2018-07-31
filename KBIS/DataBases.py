@@ -5,10 +5,9 @@ import traceback
 import os
 
 class DataBases(object):
-    def __init__(self, EXCEL_PATH):
+    def __init__(self):
         self.MAXGEN = 99
         self.MINGEN = 15
-        self.EXCELFILE = EXCEL_PATH
         try:
             os.remove(":memory:")
         except:
