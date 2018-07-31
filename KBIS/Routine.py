@@ -210,13 +210,13 @@ class Routine(object):
                 elif(directmail.text.find('m:')==0):
                     #普通に会話なのでなんもしなくていいんじゃない？
                     pass
-                
-            if(directmail.text.find("sudo:")==0):
-                pass
-
-
-
-
+                elif(directmail.text.find('q:')==0):
+                    self.api.PostDirectMessage(screen_name=developer_screen_name,text='質問が届いています\r\n'+directmail.text.replace('q:',''))
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='開発者に伝えました！\r\nありがとうございました！')
+                elif(directmail.text.find('help')==0):
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='[info]情報要求できます。\r\n[register:(苗字)(半角スペース)(名前)]データベースに登録します。\r\n[change:(新しいTwitterユーザ名)]データベースのあなたのTwitterアカウント情報を変更します。\r\n[m:(文章)]文頭にm:がついたメッセージは構文判別されません（エラーが出ません）')
+                else:
+                    self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='KBISが認識できない値を検出しました。 help と打って使用できるコマンドについて確認してください。')
         else:
             print('DMはありません')
 
