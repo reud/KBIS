@@ -27,5 +27,5 @@ try:
     routine=Routine.Routine(api,True,dir)
 except:
     traceback.print_exc()
-    #routine=Routine.Routine(api,False,dir)
+    routine=Routine.Routine(api,False,dir)
     pass
