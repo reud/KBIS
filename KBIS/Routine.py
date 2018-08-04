@@ -8,14 +8,27 @@ import  WordBox
 developer_screen_name='r_e_u_d'
 import os
 import traceback
+import  sys
+import  RegularlyTweet
 class Routine(object):
-    def __init__(self,api:twitter.Api,db:DataBases.DataBases,devmode:bool,dir:str):
+    def __init__(self,api:twitter.Api,devmode:bool,dir:str):
         """:type : twitter.Api"""
+        if(devmode):
+            self.logpath="Log.txt"
+        else:
+            self.logpath="../../KBIS_Workingplace/Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+        print(self.logpath)
+        self.logwriter=LogWriterClassVer.LogWriterClassVer(self.logpath)
+        self.logwriter.LogWrite('print','起動成功')
+
         self.wordbox=WordBox.WordBox()
-        self.database=db
+        self.database=DataBases.DataBases(devmode)
         self.api=api
         self.devmode=devmode
         self.dir=dir #use for ignoreList
+        self.regularly_tweet=RegularlyTweet.Tweets(api,self.logpath)
+        self.regularly_tweet.MakeNowFundTweet(self.database.moneyBook)
+        sys.exit()
     def DatabaseOutPutter(self,arg1:str,arg2):#KBISにデータベースの検索結果を載せる関数 (ここでは文字列を返す)
         lists=self.database.Search(arg1,arg2)
         line=f'{len(lists)}個の要素が検索されました。\r\n'
@@ -33,8 +46,9 @@ class Routine(object):
         self.logwriter.LogWrite("print","KBISが起動しました。devmode:{0}".format(self.devmode))
         self.ignoreList = []
         if(not self.devmode):#本環境ではファイルから読み込む(ファイルあるの前提とする。)
+
             self.logwriter.LogWrite("print","Logファイルを読み込みます。")
-            IgnoreListFile = open('../Tools/IgnoreList.txt')
+            IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
             temp = IgnoreListFile.readline().strip()
             while (temp):
                 print("ignoreリストからロード:" + str(temp))
@@ -51,12 +65,18 @@ class Routine(object):
                 self.logwriter.LogWrite(arg1="Writing...id:{0}".format(dm.id))
             #ignoreListを更新する
             try:
-                os.remove('../Tools/IgnoreList.txt')
+                if(self.devmode):
+                    os.remove('../Tools/IgnoreList.txt')
+                else:
+                    os.remove('../../KBIS_Workingplace/IgnoreList.txt')
             except:#どうせファイルないくらいしかエラー起きないのでスルー
                 pass
             #ignoreListファイルの更新
             strings=""
-            self.ignLisFile=open('../Tools/IgnoreList.txt','a')
+            if(self.devmode):
+                self.ignLisFile=open('../Tools/IgnoreList.txt','a')
+            else:
+                os.remove('../../KBIS_Workingplace/IgnoreList.txt')
             for t in range(len(self.ignoreList) - 1):
                 strings += str(self.ignoreList[t]) + "\n"
             strings += str(self.ignoreList[len(self.ignoreList) - 1])
@@ -71,6 +91,7 @@ class Routine(object):
         while(True):
             time.sleep(59)
             self.DirectMailReader()
+            self.regularly_tweet.Check()
         pass
     def Init(self):
         self.FirstRoutine()

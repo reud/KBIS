@@ -17,18 +17,15 @@ import APIKeyReader
 import DataBases
 import Routine
 import WordBox
+import  traceback
 dir=''
-l=LogWriterClassVer.LogWriterClassVer()
-db=DataBases.DataBases()
-for i in db.Search('get','root'):
-    print(i)
 apiR=APIKeyReader.Reader('../KEYS')
 api=apiR.GetApi()
 w=WordBox.WordBox()
 try:
     print('mode:{0}'.format(sys.argv[1]))
-    routine=Routine.Routine(api,db,True,dir)
+    routine=Routine.Routine(api,True,dir)
 except:
-    routine=Routine.Routine(api,db,False,dir)
+    traceback.print_exc()
+    #routine=Routine.Routine(api,False,dir)
     pass
-routine.Init()

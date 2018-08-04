@@ -5,15 +5,19 @@ import traceback
 import os
 
 class DataBases(object):
-    def __init__(self):
+    def __init__(self,devmode:bool):
         self.MAXGEN = 99
         self.MINGEN = 15
         try:
             os.remove(":memory:")
         except:
             pass
-        self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
-        self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
+        if(devmode):
+            self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
+            self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
+        else:
+            self.twitterBook = '../../KBIS_Workingplace/Twitter対応リスト.xlsx'
+            self.moneyBook='../../KBIS_Workingplace/個人支払出納管理簿.xlsx'
         self.connect = sqlite3.connect(":memory:")
         self.cursor = self.connect.cursor()
         create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''

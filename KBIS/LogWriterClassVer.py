@@ -10,9 +10,11 @@ import webbrowser
 import time
 import datetime
 class LogWriterClassVer(object):
+    def __init__(self,FilePath:str):
+        self.path=FilePath
     def LogWrite(self,type1="print",arg1="none",arg2="none",arg3="none"):#第一引数はタイプ　第二引数はいろいろ
         try:
-            LOGFILE=open("Log.txt",'a')
+            LOGFILE=open(self.path,'a')#ここのパスを変えてください
         except:
             print("Log.txtの読み込みに失敗")
             return
@@ -40,8 +42,8 @@ class LogWriterClassVer(object):
         elif(type1=="CantFind"):#arg1は要求先
             LOGFILE.write(str(time)+" :CantFindUser at Direct　From:"+str(arg1))
         elif(type1=="print"):#arg1は文字列
-            LOGFILE.write(str(time)+"Output to console:\n/////START"+str(arg1))
-            LOGFILE.write("///////END")
+            LOGFILE.write(str(time)+"Output to console:\n"+str(arg1))
+            LOGFILE.write("\n///////END\n")
             print(str(arg1))
         else:
             LOGFILE.write(str(time)+"Invalid Requirement"+" type1="+type1)
