@@ -26,9 +26,7 @@ class Routine(object):
         self.api=api
         self.devmode=devmode
         self.dir=dir #use for ignoreList
-        self.regularly_tweet=RegularlyTweet.Tweets(api,self.logpath)
-        self.regularly_tweet.MakeNowFundTweet(self.database.moneyBook)
-        sys.exit()
+        self.regularly_tweet=RegularlyTweet.Tweets(api,self.database.moneyBook,self.logpath)
     def DatabaseOutPutter(self,arg1:str,arg2):#KBISにデータベースの検索結果を載せる関数 (ここでは文字列を返す)
         lists=self.database.Search(arg1,arg2)
         line=f'{len(lists)}個の要素が検索されました。\r\n'
