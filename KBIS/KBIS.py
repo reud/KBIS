@@ -27,5 +27,8 @@ try:
     routine=Routine.Routine(api,True,dir)
 except:
     traceback.print_exc()
-    routine=Routine.Routine(api,False,dir)
-    pass
+    try:
+        routine=Routine.Routine(api,False,dir)
+    except:
+        traceback.print_exc()
+print('BadFinished')
