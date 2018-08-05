@@ -153,10 +153,13 @@ class Routine(object):
                 if(self.devmode):
                     if(developer_screen_name==directmail.sender_screen_name):
                         authority=True
-                for i in self.database.Search('get','root'):
-                    for strings in i:#ここから未テスト
-                        if(strings==directmail.sender_screen_name):
-                            authority=True
+                try:
+                    for i in self.database.Search('get','root'):
+                        for strings in i:#ここから未テスト
+                            if(strings==directmail.sender_screen_name):
+                                authority=True
+                except:
+                    authority=False
                 #ここまで
                 if(authority):
                     if(directmail.text.find('getDB')==0):
