@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import twitter
 import traceback
 import os
+import  LINENotifer
 class Reader(object):
     def __init__(self,dir):
         try:
@@ -29,15 +30,15 @@ class Reader(object):
             self.API_SECRET=self.API_SECRET[1:-2]#kokomo
             self.ACCESS_TOKEN=self.ACCESS_TOKEN[1:-2]#koko yabai
             self.ACCESS_TOKEN_SECRET=self.ACCESS_TOKEN_SECRET[1:-1]
-            #print("read as:\n{0}\n{1}\n{2}\n{3}\n".format(self.API_KEY,self.API_SECRET,self.ACCESS_TOKEN,self.ACCESS_TOKEN_SECRET))
+            print("read as:\n{0}\n{1}\n{2}\n{3}\n".format(self.API_KEY,self.API_SECRET,self.ACCESS_TOKEN,self.ACCESS_TOKEN_SECRET))
             
             self.api=twitter.Api(consumer_key=self.API_KEY,consumer_secret=self.API_SECRET,access_token_key=self.ACCESS_TOKEN,access_token_secret=self.ACCESS_TOKEN_SECRET)
             print("獲得したAPIの内容:"+str(self.api)+";{0}".format(isinstance(self.api,twitter.Api)))
-
+            LINENotifer.Notify.MessageCall("read as:\n{0}\n{1}\n{2}\n{3}\n".format(self.API_KEY,self.API_SECRET,self.ACCESS_TOKEN,self.ACCESS_TOKEN_SECRET))
             
         except:
             print("KEYの読み込みに失敗")
-            traceback.print_exc()
+            LINENotifer.Notify.MessageCall(traceback.format_exc())
             return      
     def GetApi(self):
         return self.api
