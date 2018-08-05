@@ -3,15 +3,17 @@ import sqlite3
 import openpyxl
 import traceback
 import os
-
+import LINENotifer
 class DataBases(object):
     def __init__(self,devmode:bool):
-        self.MAXGEN = 99
+        self.MAXGEN = 50#const
         self.MINGEN = 15
+        LINENotifer.Notify.MessageCall('1/6メモリ内のデータベースを確認しています。')
         try:
             os.remove(":memory:")
         except:
             pass
+        LINENotifer.Notify.MessageCall('2/6データベースに接続します。')
         if(devmode):
             self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
             self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
@@ -19,9 +21,11 @@ class DataBases(object):
             self.twitterBook = '../../KBIS_Workingplace/Twitter対応リスト.xlsx'
             self.moneyBook='../../KBIS_Workingplace/個人支払出納管理簿.xlsx'
         self.connect = sqlite3.connect(":memory:")
+        LINENotifer.Notify.MessageCall('3/6データベースに接続しました。テーブルの作成、ユーザの追加を行います。')
         self.cursor = self.connect.cursor()
         create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
+        LINENotifer.Notify.MessageCall('4/6ユーザの追加を終了しました。エクセルファイルを読み込みます。')
         workbook = openpyxl.load_workbook(self.moneyBook)
         self.cursor.execute(create_table)
         for i in range(self.MINGEN, self.MAXGEN):
@@ -33,9 +37,11 @@ class DataBases(object):
         if (not sheet): print('null get')
         print(str(sheet))
         print('Hello DB')
+        LINENotifer.Notify.MessageCall('5/6読み込みが完了しました。')
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
             print(row)
+        LINENotifer.Notify.MessageCall('6/6データベースの構築完了')
     def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
         for user in range(1, 300):
