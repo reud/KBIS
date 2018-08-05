@@ -10,6 +10,7 @@ import os
 import traceback
 import  sys
 import  RegularlyTweet
+import LINENotifer
 class Routine(object):
     def __init__(self,api:twitter.Api,devmode:bool,dir:str):
         """:type : twitter.Api"""
@@ -23,10 +24,13 @@ class Routine(object):
 
         self.wordbox=WordBox.WordBox()
         self.database=DataBases.DataBases(devmode)
+        LINENotifer.Notify.MessageCall('KBIS起動 2/5(DataBaseの構築成功)')
         self.api=api
         self.devmode=devmode
         self.dir=dir #use for ignoreList
         self.regularly_tweet=RegularlyTweet.Tweets(api,self.database.moneyBook,self.logpath)
+        LINENotifer.Notify.MessageCall('KBIS起動 3/5(定期ツイートのインスタンス取得の成功)')
+        self.Init()
     def DatabaseOutPutter(self,arg1:str,arg2):#KBISにデータベースの検索結果を載せる関数 (ここでは文字列を返す)
         lists=self.database.Search(arg1,arg2)
         line=f'{len(lists)}個の要素が検索されました。\r\n'
@@ -40,7 +44,7 @@ class Routine(object):
         else:
             #self.api.PostDirectMessage(text="(dev)KBIS起動",screen_name=developer_screen_name)
             pass
-        self.logwriter=LogWriterClassVer.LogWriterClassVer()
+        LINENotifer.Notify.MessageCall('KBIS起動 4/5(FirstRoutineを開始)')
         self.logwriter.LogWrite("print","KBISが起動しました。devmode:{0}".format(self.devmode))
         self.ignoreList = []
         if(not self.devmode):#本環境ではファイルから読み込む(ファイルあるの前提とする。)
@@ -82,6 +86,7 @@ class Routine(object):
             self.ignLisFile.write(strings)
             self.ignLisFile.close()
             #きっと書き込みが終了してるでしょう・・・
+        LINENotifer.Notify.MessageCall('KBIS起動 5/5(完了)')
         print('60秒後にKBISのルーチンが開始されます。')
         return
 
@@ -95,7 +100,11 @@ class Routine(object):
         self.FirstRoutine()
         self.GoRoutine()
     def DirectMailReader(self):
-        self.directmails=self.api.GetDirectMessages()
+        try:
+            self.directmails=self.api.GetDirectMessages()
+        except:
+            self.logwriter.LogWrite('print',traceback.format_exc())
+            return
         #ここからignoreListに対応するダイレクトメールを削除
         for ignoreNum in self.ignoreList:
             for directmail in self.directmails:
