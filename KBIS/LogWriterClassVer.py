@@ -9,6 +9,7 @@ import oauth2
 import webbrowser
 import time
 import datetime
+import traceback
 class LogWriterClassVer(object):
     def __init__(self,FilePath:str):
         self.path=FilePath
@@ -17,6 +18,7 @@ class LogWriterClassVer(object):
             LOGFILE=open(self.path,'a')#ここのパスを変えてください
         except:
             print("Log.txtの読み込みに失敗")
+            traceback.print_exc()
             return
         type1=str(type1)
         print("type1="+type1)

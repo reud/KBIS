@@ -34,7 +34,9 @@ except:
 if(devmode):
     l=LogWriterClassVer.LogWriterClassVer('Log.txt')
 else:
-    l=LogWriterClassVer.LogWriterClassVer('../../KBIS_Workingplace/Log.txt')
+    #l=LogWriterClassVer.LogWriterClassVer('../../KBIS_Workingplace/Log.txt')
+    l=LogWriterClassVer.LogWriterClassVer('Log.txt')
+
 try:
     routine=Routine.Routine(api,devmode,dir)
 except:
@@ -42,4 +44,4 @@ except:
     traceback.print_exc()
     l.LogWrite('print',traceback.format_exc())
 LINENotifer.Notify.MessageCall(f'起動終了しました。')
-print('Finished Abnormally(Bad Endってかっこよくないですか？)')
+print('Finished Abnormally')

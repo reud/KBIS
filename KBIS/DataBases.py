@@ -18,8 +18,10 @@ class DataBases(object):
             self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
             self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
         else:
-            self.twitterBook = '../../KBIS_Workingplace/Twitter対応リスト.xlsx'
-            self.moneyBook='../../KBIS_Workingplace/個人支払出納管理簿.xlsx'
+            #self.twitterBook = '../../KBIS_Workingplace/Twitter対応リスト.xlsx'
+            #self.moneyBook='../../KBIS_Workingplace/個人支払出納管理簿.xlsx'
+            self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
+            self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
         self.connect = sqlite3.connect(":memory:")
         LINENotifer.Notify.MessageCall('DataBase 3/6 データベースに接続しました。テーブルの作成、ユーザの追加を行います。')
         self.cursor = self.connect.cursor()

@@ -17,7 +17,9 @@ class Routine(object):
         if(devmode):
             self.logpath="Log.txt"
         else:
-            self.logpath="../../KBIS_Workingplace/Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+            #self.logpath="../../KBIS_Workingplace/Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+            self.logpath="Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+
         print(self.logpath)
         self.logwriter=LogWriterClassVer.LogWriterClassVer(self.logpath)
         self.logwriter.LogWrite('print','起動成功')
@@ -50,11 +52,13 @@ class Routine(object):
         if(not self.devmode):#本環境ではファイルから読み込む(ファイルあるの前提とする。)
 
             self.logwriter.LogWrite("print","Logファイルを読み込みます。")
-            IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
+            #IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
+            IgnoreListFile = open('IgnoreList.txt')
+
             temp = IgnoreListFile.readline().strip()
             while (temp):
                 print("ignoreリストからロード:" + str(temp))
-                self.ignoreList.append(temp)
+                self.ignoreList.append(int(temp))
                 temp = IgnoreListFile.readline()
             try:
                 IgnoreListFile.close()
@@ -70,22 +74,12 @@ class Routine(object):
                 if(self.devmode):
                     os.remove('../Tools/IgnoreList.txt')
                 else:
-                    os.remove('../../KBIS_Workingplace/IgnoreList.txt')
+                    #os.remove('../../KBIS_Workingplace/IgnoreList.txt')
+                    os.remove('../Tools/IgnoreList.txt')
+
             except:#どうせファイルないくらいしかエラー起きないのでスルー
                 pass
-            #ignoreListファイルの更新
-            strings=""
-            if(self.devmode):
-                self.ignLisFile=open('../Tools/IgnoreList.txt','a')
-            else:
-                os.remove('../../KBIS_Workingplace/IgnoreList.txt')
-            for t in range(len(self.ignoreList) - 1):
-                strings += str(self.ignoreList[t]) + "\n"
-            strings += str(self.ignoreList[len(self.ignoreList) - 1])
-            strings = strings.replace("\n\n", "\n")
-            self.ignLisFile.write(strings)
-            self.ignLisFile.close()
-            #きっと書き込みが終了してるでしょう・・・
+
         LINENotifer.Notify.MessageCall('KBIS起動 5/5(完了)')
         print('60秒後にKBISのルーチンが開始されます。')
         return
@@ -100,6 +94,7 @@ class Routine(object):
         self.FirstRoutine()
         self.GoRoutine()
     def DirectMailReader(self):
+
         try:
             self.directmails=self.api.GetDirectMessages()
         except:
@@ -112,8 +107,26 @@ class Routine(object):
                     self.directmails.remove(directmail)
                     print('ignoreListにあったDMです。削除しています・・・　内容...:{0}'.format(directmail.text))
                     break#見つけたらfor文ごと終了させる。
+                else:
+                    #print(f'検索ちゅう・・・{directmail.id}and{ignoreNum}')
+                    pass
         if(len(self.directmails)!=0):#DMを読み取る処理
             print('DMの件数は{0}件です。'.format(len(self.directmails)))
+        for i in self.directmails:
+            self.ignoreList.append(i.id)
+        print("Ignoreファイルの更新を行います。")
+        writingData = open('IgnoreList.txt', 'w')
+        strings = ""
+        writingData.write(strings)
+        writingData.close()
+        writingData = open('IgnoreList.txt', 'w')
+        for t in self.ignoreList:
+            strings += str(t) + "\n"
+        strings = strings.replace("\n\n", "\n")
+        writingData.write(strings)
+        writingData.close()
+        print("Ignoreファイルの更新は終了しました。")
+        sys.exit()
         #ここからDMの処理
         #devmode中はsudo機能とdev機能のどちらもdeveloperが使用可能 sudo calluserは自分に結果を通知
         #本環境は
@@ -132,7 +145,6 @@ class Routine(object):
         #ignoreListに入れる
 
         for directmail in self.directmails:
-            self.ignoreList.append(directmail.id)
             print(f'DirectMessageの内容{directmail.text}')
             if(directmail.text.find("dev:")==0):
                 directmail.text=directmail.text.replace('dev:','')
@@ -250,6 +262,9 @@ class Routine(object):
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='KBISが認識できない値を検出しました。 help と打って使用できるコマンドについて確認してください。')
         else:
             print('DMはありません')
-
+    def ReNewIgnore(self):
+        os.remove('IgnoreList.txt')
+        ignorefile=open('IgnoreList.txt','a')
+        
 
 
