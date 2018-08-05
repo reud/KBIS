@@ -6,7 +6,7 @@ import os
 import LINENotifer
 class DataBases(object):
     def __init__(self,devmode:bool):
-        self.MAXGEN = 50#const
+        self.MAXGEN = 20#const
         self.MINGEN = 15
         LINENotifer.Notify.MessageCall('DataBase 1/6 メモリ内のデータベースを確認しています。')
         try:
@@ -189,8 +189,7 @@ class DataBases(object):
                 for i in self.cursor.execute(select_sql):
                     returnList.append(i)
                 return returnList
-        turn=[]
-        return turn
+        raise  ValueError('値見つからない')
     def RegisterOrChanger(self,Rname:str,NewTwitterName:str,register=False)-> str:
         if(not register):
             listy=self.Search('at',Rname)
