@@ -17,8 +17,8 @@ class Routine(object):
         if(devmode):
             self.logpath="Log.txt"
         else:
-            #self.logpath="../../KBIS_Workingplace/Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
-            self.logpath="Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+            self.logpath="../../KBIS_Workingplace/Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
+            #self.logpath="Log.txt"#カレントディレクトリが/KEYSになってる可能性が高い(原因は不明)
 
         print(self.logpath)
         self.logwriter=LogWriterClassVer.LogWriterClassVer(self.logpath)
@@ -74,8 +74,8 @@ class Routine(object):
                 if(self.devmode):
                     os.remove('../Tools/IgnoreList.txt')
                 else:
-                    #os.remove('../../KBIS_Workingplace/IgnoreList.txt')
-                    os.remove('../Tools/IgnoreList.txt')
+                    os.remove('../../KBIS_Workingplace/IgnoreList.txt')
+                    #os.remove('../Tools/IgnoreList.txt')
 
             except:#どうせファイルないくらいしかエラー起きないのでスルー
                 pass

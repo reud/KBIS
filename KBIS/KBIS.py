@@ -34,8 +34,8 @@ except:
 if(devmode):
     l=LogWriterClassVer.LogWriterClassVer('Log.txt')
 else:
-    #l=LogWriterClassVer.LogWriterClassVer('../../KBIS_Workingplace/Log.txt')
-    l=LogWriterClassVer.LogWriterClassVer('Log.txt')
+    l=LogWriterClassVer.LogWriterClassVer('../../KBIS_Workingplace/Log.txt')
+    #l=LogWriterClassVer.LogWriterClassVer('Log.txt')
 
 try:
     routine=Routine.Routine(api,devmode,dir)
