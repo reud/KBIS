@@ -52,7 +52,7 @@ class Routine(object):
         if(not self.devmode):#本環境ではファイルから読み込む(ファイルあるの前提とする。)
 
             self.logwriter.LogWrite("print","Logファイルを読み込みます。")
-            IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
+            IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt','a')
             #IgnoreListFile = open('IgnoreList.txt')
 
             temp = IgnoreListFile.readline().strip()
