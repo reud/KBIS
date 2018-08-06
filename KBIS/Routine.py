@@ -103,9 +103,9 @@ class Routine(object):
         #ここからignoreListに対応するダイレクトメールを削除
         for ignoreNum in self.ignoreList:
             for directmail in self.directmails:
-                if(directmail.id==ignoreNum):
+                if(directmail.id==ignoreNum or directmail.sender_screen_name=='kbisnaikei'):
                     self.directmails.remove(directmail)
-                    print('ignoreListにあったDMです。削除しています・・・　内容...:{0}'.format(directmail.text))
+                    print('ignoreListにあったDMです。削除しています・・・　内容...:{0} from {1}'.format(directmail.text,directmail.sender_screen_name))
                     break#見つけたらfor文ごと終了させる。
                 else:
                     #print(f'検索ちゅう・・・{directmail.id}and{ignoreNum}')
@@ -126,7 +126,6 @@ class Routine(object):
         writingData.write(strings)
         writingData.close()
         print("Ignoreファイルの更新は終了しました。")
-        sys.exit()
         #ここからDMの処理
         #devmode中はsudo機能とdev機能のどちらもdeveloperが使用可能 sudo calluserは自分に結果を通知
         #本環境は
@@ -145,7 +144,7 @@ class Routine(object):
         #ignoreListに入れる
 
         for directmail in self.directmails:
-            print(f'DirectMessageの内容{directmail.text}')
+            print(f'DirectMessageの内容{directmail.text} from {directmail.sender_screen_name}')
             if(directmail.text.find("dev:")==0):
                 directmail.text=directmail.text.replace('dev:','')
                 #ここでdevが本当にdeveloperか確認する

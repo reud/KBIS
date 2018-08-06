@@ -6,7 +6,7 @@ import os
 import LINENotifer
 class DataBases(object):
     def __init__(self,devmode:bool):
-        self.MAXGEN = 20#const
+        self.MAXGEN = 22#const
         self.MINGEN = 15
         LINENotifer.Notify.MessageCall('DataBase 1/6 メモリ内のデータベースを確認しています。')
         try:
@@ -74,8 +74,11 @@ class DataBases(object):
     def renew(self):#一回全部消すか・・・
         delete_usersql='''drop table users'''
         delete_twittersql='''drop table TwitterExistsUser'''
-        self.cursor.execute(delete_usersql)
-        self.cursor.execute(delete_twittersql)
+        try:
+            self.cursor.execute(delete_usersql)
+            self.cursor.execute(delete_twittersql)
+        except:
+            traceback.print_exc()
         create_table = '''create table if not exists users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.cursor.execute(create_table)
         self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
@@ -195,31 +198,31 @@ class DataBases(object):
     def RegisterOrChanger(self,Rname:str,NewTwitterName:str,register=False)-> str:
         if(not register):
             listy=self.Search('at',Rname)
-            print(listy)
             for list in listy:
                 Rname=str(list[1])
         wb=openpyxl.load_workbook(self.twitterBook)
         sheet=wb['Sheet1']
-        for i in range(2,999):
-            print(sheet.cell(row=i,column=1).value)
-            if(sheet.cell(row=i,column=1).value==Rname):
-                if(register):
-                    if(sheet.cell(row=i,column=2).value==None):
-                        sheet.cell(row=i,column=2,value=NewTwitterName)
-                        wb.save(self.twitterBook)
-                        return '登録完了しました！'
+        for i in range(2,200):#const
+            if(sheet.cell(row=i,column=1).value!=None):
+                print(sheet.cell(row=i,column=1).value)
+                if(sheet.cell(row=i,column=1).value==Rname):
+                    if(register):
+                        if(sheet.cell(row=i,column=2).value==None):
+                            sheet.cell(row=i,column=2,value=NewTwitterName)
+                            wb.save(self.twitterBook)
+                            return '登録完了しました！'
 
+                        else:
+                            wb.save(self.twitterBook)
+                            return 'すでに登録されています。infoコマンドをお使いください。'
                     else:
-                        wb.save(self.twitterBook)
-                        return 'すでに登録されています。infoコマンドをお使いください。'
-                else:
-                    if(sheet.cell(row=i,column=2).value!=None):
-                        sheet.cell(row=i,column=2,value=NewTwitterName)
-                        wb.save(self.twitterBook)
-                        return '変更完了しました！'
-                    else:
-                        wb.save(self.twitterBook)
-                        return 'あなたのデータは登録されていません。registerコマンドを使用してデータベースに登録を行ってください。'
+                        if(sheet.cell(row=i,column=2).value!=None):
+                            sheet.cell(row=i,column=2,value=NewTwitterName)
+                            wb.save(self.twitterBook)
+                            return '変更完了しました！'
+                        else:
+                            wb.save(self.twitterBook)
+                            return 'あなたのデータは登録されていません。registerコマンドを使用してデータベースに登録を行ってください。'
         wb.save(self.twitterBook)
         return 'あなたが誰か判別することが出来ませんでした。管理者に確認することをお勧め致します。'
 
