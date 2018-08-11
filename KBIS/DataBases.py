@@ -197,9 +197,12 @@ class DataBases(object):
         raise  ValueError('値見つからない')
     def RegisterOrChanger(self,Rname:str,NewTwitterName:str,register=False)-> str:
         if(not register):
-            listy=self.Search('at',Rname)
-            for list in listy:
-                Rname=str(list[1])
+            try:
+                listy=self.Search('at',Rname)
+                for list in listy:
+                    Rname=str(list[1])
+            except:
+                return 'あなたの名前は元々データベースに登録されていません。'
         wb=openpyxl.load_workbook(self.twitterBook)
         sheet=wb['Sheet1']
         for i in range(2,200):#const
