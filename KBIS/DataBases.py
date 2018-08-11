@@ -68,6 +68,9 @@ class DataBases(object):
                     exist = True
             if(not exist):
                 i=0
+                LINENotifer.Notify.MessageCall(
+                    f'管理簿にいて対応リストにいないUserを発見{sheet.cell(row=(user + 3), column=2).value}')
+
                 while(True):
                     if(sheetTB.cell(row=(i+1), column=1).value):
                         pass
@@ -86,6 +89,7 @@ class DataBases(object):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
             else:
                 pass
+        twitterbook.save()
         return userList
     def renew(self):#一回全部消すか・・・
         delete_usersql='''drop table users'''
