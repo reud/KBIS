@@ -33,7 +33,7 @@ class DataBases(object):
             try:
                 self.cursor.executemany(self.sql, self.CreateUsersFromSheet(i))
             except KeyError:
-                break
+                LINENotifer.Notify.MessageCall(traceback.format_exc())
         print('Hello DB')
         LINENotifer.Notify.MessageCall('DataBase 5/6 読み込みが完了しました。')
         select_sql = 'select * from users'
