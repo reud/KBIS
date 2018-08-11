@@ -44,6 +44,7 @@ class DataBases(object):
         for row in self.cursor.execute(select_sql):
             print(row)
         LINENotifer.Notify.MessageCall('DataBase 6/6データベースの構築完了')
+        workbook.save(self.moneyBook)
     def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
         for user in range(1, 100):
