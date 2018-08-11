@@ -152,8 +152,8 @@ class Routine(object):
                             try:
                                 self.api.PostUpdate(text=directmail.text)
                             except:
-                                LINENotifer.Notify().MessageCall('speakコマンドの失敗')
-                                LINENotifer.Notify().MessageCall(traceback.format_exc())
+                                LINENotifer.Notify.MessageCall('speakコマンドの失敗')
+                                LINENotifer.Notify.MessageCall(traceback.format_exc())
                         else:
                             print(f'speakコマンド:{directmail.text}')
                 else:#developerじゃない場合
@@ -260,7 +260,8 @@ class Routine(object):
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='[info]情報要求できます。\r\n'
                                                                                               '[register:(苗字)(半角スペース)(名前)]データベースに登録します。\r\n'
                                                                                               '[change:(新しいTwitterユーザ名)]データベースのあなたのTwitterアカウント情報を変更します。\r\n'
-                                                                                              '[m:(文章)]文頭にm:がついたメッセージは構文判別されません（エラーが出ません）\r\n以下は管理者のコマンドです。')
+                                                                                              '[m:(文章)]文頭にm:がついたメッセージは構文判別されません（エラーが出ません）\r\n以下は管理者のコマンドです。'
+                                                                                              'sudo:CallUser,getDB,reload ')
                 else:
                     self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='KBISが認識できない値を検出しました。 help と打って使用できるコマンドについて確認してください。')
         else:
