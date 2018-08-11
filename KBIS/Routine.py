@@ -204,6 +204,7 @@ class Routine(object):
                                         money=int(list[3])
                                         dmTo=str(list[2])
                                         self.api.PostDirectMessage(screen_name=dmTo,text=self.wordbox.GetString(name,money,True,directmail.text))
+                                        LINENotifer.Notify.MessageCall(f'CallUsderによるCallTo:{name}')
                             except:
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'検索結果が0または引数が間違っていると思われます。At arg2. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                         elif(splitedWords[0]=='at'):
@@ -221,9 +222,13 @@ class Routine(object):
                                         self.api.PostDirectMessage(screen_name=dmTo,
                                                                     text=self.wordbox.GetString(name, money, True,
                                                                                                    directmail.text))
+                                        LINENotifer.Notify.MessageCall(f'CallUsderによるCallTo:{name}')
+
                                         pass
                             except:
                                 self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text='引数が不正か、要素が見つかりませんでした。')
+                                LINENotifer.Notify.MessageCall(traceback.format_exc())
+
                         else:
                              self.api.PostDirectMessage(screen_name=directmail.sender_screen_name,text=f'引数が間違っていると思われます。At arg1. arg1={splitedWords[0]} and arg2={splitedWords[1]}')
                     elif(directmail.text.find('reload')==0):
