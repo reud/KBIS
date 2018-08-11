@@ -155,7 +155,7 @@ class Routine(object):
                         directmail.text=directmail.text.replace('speak ','')
                         if(not self.devmode):
                             try:
-                                self.api.PostUpdate(text=directmail.text)
+                                self.api.PostUpdate(directmail.text)
                             except:
                                 LINENotifer.Notify.MessageCall('speakコマンドの失敗')
                                 LINENotifer.Notify.MessageCall(traceback.format_exc())
@@ -202,7 +202,7 @@ class Routine(object):
                                     for list in lists:
                                         name=str(list[1])
                                         money=int(list[3])
-                                        print(f'CallUser要求を行いました(dev)\r\n{self.wordbox.GetString(name,money,True,directmail.text)}')
+                                        LINENotifer.Notify.MessageCall(f'CallUser要求を行いました(dev)\r\n{self.wordbox.GetString(name,money,True,directmail.text)}')
                                 else:
                                     for list in lists:
                                         name=str(list[1])
