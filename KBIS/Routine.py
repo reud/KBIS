@@ -52,8 +52,10 @@ class Routine(object):
         if(not self.devmode):#本環境ではファイルから読み込む(ファイルあるの前提とする。)
 
             self.logwriter.LogWrite("print","Logファイルを読み込みます。")
-            IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
-            #IgnoreListFile = open('IgnoreList.txt')
+            if(not self.devmode):
+                IgnoreListFile = open('../../KBIS_Workingplace/IgnoreList.txt')
+            else:
+                IgnoreListFile = open('IgnoreList.txt')
 
             temp = IgnoreListFile.readline().strip()
             while (temp):
@@ -72,7 +74,7 @@ class Routine(object):
             #ignoreListを更新する
             try:
                 if(self.devmode):
-                    os.remove('../Tools/IgnoreList.txt')
+                    os.remove('IgnoreList.txt')
                 else:
                     os.remove('../../KBIS_Workingplace/IgnoreList.txt')
                     #os.remove('../Tools/IgnoreList.txt')
@@ -116,7 +118,10 @@ class Routine(object):
             self.ignoreList.append(i.id)
         print("Ignoreファイルの更新を行います。")
         strings=''
-        writingData = open('../../KBIS_Workingplace/IgnoreList.txt', 'w')
+        if(not self.devmode):
+            writingData = open('../../KBIS_Workingplace/IgnoreList.txt', 'w')
+        else:
+            writingData=open('IgnoreList.txt','w')
         for t in self.ignoreList:
             strings += str(t) + "\n"
         strings = strings.replace("\n\n", "\n")

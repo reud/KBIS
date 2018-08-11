@@ -109,7 +109,7 @@ class DataBases(object):
         for i in range(self.MINGEN, self.MAXGEN):
             try:
                 sheet = workbook['{0}G'.format(i)]
-                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
+                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(i))
             except KeyError:
                 break
         print('ユーザ全体のリストを表示します。')
