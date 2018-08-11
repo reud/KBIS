@@ -46,7 +46,7 @@ class DataBases(object):
         LINENotifer.Notify.MessageCall('DataBase 6/6データベースの構築完了')
     def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
-        for user in range(1, 300):
+        for user in range(1, 100):
             # moneyCreating
             sum = 0
             for debt in range(8, 200):
@@ -60,7 +60,7 @@ class DataBases(object):
             sheetTB = twitterbook['Sheet1']
             exist = False
             authority = None
-            for i in range(1, 999):
+            for i in range(1, 200):
                 if (sheet.cell(row=(user + 3), column=2).value == sheetTB.cell(row=(i+1), column=1).value):
                     twitterName = sheetTB.cell(row=(i+1), column=2).value
                     if (sheetTB.cell(row=(i+1), column=3).value):
@@ -68,8 +68,10 @@ class DataBases(object):
                     exist = True
 
             #
-            if(sheet.cell(row=(user + 3), column=2).value ):
+            if(sheet.cell(row=(user + 3), column=2).value and exist):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
+            else:
+                pass
         return userList
     def renew(self):#一回全部消すか・・・
         delete_usersql='''drop table users'''
