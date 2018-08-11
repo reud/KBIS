@@ -66,9 +66,21 @@ class DataBases(object):
                     if (sheetTB.cell(row=(i+1), column=3).value):
                         authority = sheetTB.cell(row=(i+1), column=3).value
                     exist = True
+            if(not exist):
+                i=0
+                while(True):
+                    if(sheetTB.cell(row=(i+1), column=1).value):
+                        pass
+                    else:
+                        sheetTB.cell(row=(i+1),column=1,value=sheet.cell(row=(user + 3), column=2).value)
+                        LINENotifer.Notify.MessageCall('管理簿にいて対応リストにいないUserを追加しました。')
+                        twitterName=None
+                        
+                        break
+
 
             #
-            if(sheet.cell(row=(user + 3), column=2).value and exist):
+            if(sheet.cell(row=(user + 3), column=2).value):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
             else:
                 pass
