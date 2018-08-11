@@ -73,10 +73,12 @@ class DataBases(object):
                         pass
                     else:
                         sheetTB.cell(row=(i+1),column=1,value=sheet.cell(row=(user + 3), column=2).value)
-                        LINENotifer.Notify.MessageCall('管理簿にいて対応リストにいないUserを追加しました。')
+                        LINENotifer.Notify.MessageCall(f'管理簿にいて対応リストにいないUserを追加しました。{sheet.cell(row=(user + 3), column=2).value}')
                         twitterName=None
-                        
+                        authority=None
+                        exist=True
                         break
+                    i+1
 
 
             #
