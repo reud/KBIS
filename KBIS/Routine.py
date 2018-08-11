@@ -5,7 +5,7 @@ import WatchLogReader
 import  LogWriterClassVer
 import  time
 import  WordBox
-developer_screen_name='r_e_u_d'
+developer_screen_name='reudest'
 import os
 import traceback
 import  sys
