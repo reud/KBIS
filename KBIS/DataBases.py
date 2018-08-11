@@ -28,25 +28,23 @@ class DataBases(object):
         create_table = '''create table users(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.sql = 'insert into users (gen,realname,twittername,money,remarks,authority) values (?,?,?,?,?,?)'
         LINENotifer.Notify.MessageCall('DataBase 4/6 ユーザの追加を終了しました。エクセルファイルを読み込みます。')
-        workbook = openpyxl.load_workbook(self.moneyBook)
         self.cursor.execute(create_table)
         for i in range(self.MINGEN, self.MAXGEN):
             try:
-                sheet = workbook['{0}G'.format(i)]
-                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(sheet, i))
+                self.cursor.executemany(self.sql, self.CreateUsersFromSheet(i))
             except KeyError:
                 break
-        if (not sheet): print('null get')
-        print(str(sheet))
         print('Hello DB')
         LINENotifer.Notify.MessageCall('DataBase 5/6 読み込みが完了しました。')
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
             print(row)
         LINENotifer.Notify.MessageCall('DataBase 6/6データベースの構築完了')
-        workbook.save(self.moneyBook)
-    def CreateUsersFromSheet(self, sheet, gen):  # SQLに追加できるように手に入れたデータを変換する
+    def CreateUsersFromSheet(self,gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
+
+        workbook = openpyxl.load_workbook(self.moneyBook)
+        sheet=workbook[f'{gen}G']
         for user in range(1, 100):
             # moneyCreating
             sum = 0
