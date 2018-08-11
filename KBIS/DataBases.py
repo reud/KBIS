@@ -89,7 +89,7 @@ class DataBases(object):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
             else:
                 pass
-        twitterbook.save('../Tools/Twitter対応リスト.xlsx')
+        twitterbook.save(self.twitterBook)
         return userList
     def renew(self):#一回全部消すか・・・
         delete_usersql='''drop table users'''
