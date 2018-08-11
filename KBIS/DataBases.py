@@ -43,8 +43,10 @@ class DataBases(object):
     def CreateUsersFromSheet(self,gen):  # SQLに追加できるように手に入れたデータを変換する
         userList = []
 
-        workbook = openpyxl.load_workbook(self.moneyBook)
-        sheet=workbook[f'{gen}G']
+        moneybook = openpyxl.load_workbook(self.moneyBook)
+        sheet=moneybook[f'{gen}G']
+        twitterbook = openpyxl.load_workbook(self.twitterBook)
+        sheetTB = twitterbook['Sheet1']
         for user in range(1, 100):
             # moneyCreating
             sum = 0
@@ -55,8 +57,6 @@ class DataBases(object):
                     except TypeError:
                         pass
             # Twitterアカウントとの結びつけ
-            twitterbook = openpyxl.load_workbook(self.twitterBook)
-            sheetTB = twitterbook['Sheet1']
             exist = False
             authority = None
             for i in range(1, 200):
@@ -88,7 +88,8 @@ class DataBases(object):
                 userList.append((gen, sheet.cell(row=(user + 3), column=2).value, twitterName, sum,sheet.cell(row=(user + 3), column=5).value, authority))
             else:
                 pass
-        workbook.save(self.twitterBook)
+        moneybook.save(self.moneyBook)
+        twitterbook.save(self.twitterBook)
         return userList
     def renew(self):#一回全部消すか・・・
         delete_usersql='''drop table users'''
