@@ -141,7 +141,7 @@ class Routine(object):
         #ignoreListに入れる
 
         for directmail in self.directmails:
-            print(f'DirectMessageの内容{directmail.text} from {directmail.sender_screen_name}')
+            LINENotifer.Notify.MessageCall(f'DirectMessageの内容{directmail.text} from {directmail.sender_screen_name}')
             if(directmail.text.find("dev:")==0):
                 directmail.text=directmail.text.replace('dev:','')
                 #ここでdevが本当にdeveloperか確認する

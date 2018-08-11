@@ -125,7 +125,7 @@ class DataBases(object):
         select_sql = 'select * from users'
         for row in self.cursor.execute(select_sql):
             print(row)
-        workbook.save()
+        workbook.save(self.moneyBook)
     def Search(self,word1:str,word2:str)-> list:
         createTwitterUserTable='''create table if not exists TwitterExistsUser(gen int,realname TEXT,twittername TEXT,money int,remarks TEXT,authority TEXT,UNIQUE (realname,twittername)) '''
         self.cursor.execute(createTwitterUserTable)
