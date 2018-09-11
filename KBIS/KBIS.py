@@ -15,7 +15,6 @@ import traceback
 import LogWriterClassVer
 import APIKeyReader
 l=LogWriterClassVer.LogWriterClassVer()
-
 dir="DirectryLineEmpty"#初期化用
 BOOKNAME="個人支払出納管理簿.xlsx"#読み込むxlsxファイル
 #BOOKNAME="個人支払管理簿_ModifiedExample.xlsx"
@@ -28,7 +27,6 @@ IGNOREFILE="IgnoreList.txt"#IgnoreListのファイル名
 def RootCommandPlayer(user,api,raw_str):#raw_strにはcommand,argumentが入ってる。
     if(not RootChallenger):
         return
-    
 def CommandReader(command):
     if(not RootChallenger):
         return
@@ -48,9 +46,6 @@ def CommandReader(command):
          rootcomand.Renew(_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0),_command.pop(0))     
     else:
         api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name,text="引数が多すぎる")
-
-
-
 def RootChallenger(user,api):
     #rootコマンドを頼んだuserが正当か判断する。
     #Twitter対応リストのIDの横のセルに「su」と入力すること
@@ -70,7 +65,6 @@ def RootChallenger(user,api):
     l.LogWrite("print","SuperUser要求が{0}から来ました。そのユーザーはエクセルファイルにいたか?:{1}。SuperUserではありませんでした。".format(user,exsist))
     api.PostDirectMessage(screen_name=api.VerifyCredentials().screen_name, text="SuperUser要求が来たけどSuperUserじゃなかったです。要求者:{0}".format(user))
     return False
-
 def CheckDirFile():
     print(os.getcwd()+"にある、SetDirectry.txtファイルを読み込みます");
     try:
@@ -107,8 +101,6 @@ def CheckDirFile():
         sys.exit()
     print("読み込み完了.作業用ディレクトリは「"+dir+"」です。")
     return dir
-    
-
 class MemberData(object):
     def __init__(self,name,money):
         self.name=name
@@ -117,10 +109,6 @@ class MemberData(object):
         self.remarks="none"
     def outputPrototype(self):
         print(self.name+","+str(self.money)+","+self.twiiterID+self.remarks)
-
-
-        
-
 def MessageParser(memberList,memberName):#メンバーリストからメンバーを見つけた後、返信する文章を作成する関数
     for t in range(len(memberList)):
         if(memberList[t].name==memberName):
@@ -317,93 +305,92 @@ def AutoTweet(toSaidSwitch,api):
         return False
     else:#trueならtrueを返す
         return True
+if __name__ == '__main__':
+    print("hello!" + str(os.name))
+    directry = CheckDirFile()
+    apiR = APIKeyReader.Reader(os.getcwd())
+    api = apiR.GetApi()
+    api.PostDirectMessage("【テスト】KBIS 起動", screen_name=api.VerifyCredentials().screen_name)
+    pass
+    sheetList = GetSheetList()
+    TWITTER_BOOK_SHEET = GetTwitterSheet()
+    result = GetMember(sheetList)
+    nameList = result[0]
+    memberList = result[1]
+    print("memberとツイッターアカウントの照合をします。")
+    Check(memberList, nameList)  # ここからメンバーのtwitterアカウントとの照合を行う
+    # ここでtwitterアカウント対応表との関連付けは終わりとする。
+    # ここからtwitter側の処理
 
-
-print("hello!"+str(os.name))
-directry=CheckDirFile()
-apiR =APIKeyReader.Reader(os.getcwd())
-api=apiR.GetApi()
-api.PostDirectMessage("【テスト】KBIS 起動",screen_name=api.VerifyCredentials().screen_name)
-pass
-sheetList=GetSheetList()
-TWITTER_BOOK_SHEET=GetTwitterSheet()
-result=GetMember(sheetList)
-nameList=result[0]
-memberList=result[1]
-print("memberとツイッターアカウントの照合をします。")
-Check(memberList,nameList)#ここからメンバーのtwitterアカウントとの照合を行う
-#ここでtwitterアカウント対応表との関連付けは終わりとする。
-#ここからtwitter側の処理
-
-rootcomand=RootCommand.RootCommand(api,memberList,"decoy")
-directMail=api.GetDirectMessages()
-IgnoreListFile=open(IGNOREFILE)
-ignoreList=[]
-temp=IgnoreListFile.readline().strip()
-while(temp):
-    print("ignoreリストからロード:"+str(temp))
-    ignoreList.append(temp)
-    temp=IgnoreListFile.readline()
-try:
-    IgnoreListFile.close()
-except:
-    print("IgnoreListFile.close() was failed")
-
-ignoreList=DirectMailCheck(directMail,ignoreList,memberList,api)
-
-#とりあえずここまでで起動時のセットアップを終了です
-#Ignoreファイルの更新
-print("Ignoreファイルの更新を行います。")
-writingData=open(IGNOREFILE,'w')
-strings=""
-writingData.write(strings)
-writingData.close()
-writingData=open(IGNOREFILE,'w')
-for t in range(len(ignoreList)-1):
-    strings+=str(ignoreList[t])+"\n"
-strings+=str(ignoreList[len(ignoreList)-1])
-strings=strings.replace("\n\n","\n")
-writingData.write(strings)
-writingData.close()
-print("Ignoreファイルの更新は終了しました。")
-#ここで更新終了
-#ここから自動システムになります。
-#ダイレクトメッセージの取得間隔は安定をとって、65秒に1回にしています。
-toDaySaidSwitch=False
-
-l.LogWrite(type1="login")
-while(True):
-    rootcomand.ReList(api,memberList)
-    print("定期更新モードです。")
-    print("---Ctrl+Dで終了出来ます。---")
-    time.sleep(65)
+    rootcomand = RootCommand.RootCommand(api, memberList, "decoy")
+    directMail = api.GetDirectMessages()
+    IgnoreListFile = open(IGNOREFILE)
+    ignoreList = []
+    temp = IgnoreListFile.readline().strip()
+    while (temp):
+        print("ignoreリストからロード:" + str(temp))
+        ignoreList.append(temp)
+        temp = IgnoreListFile.readline()
     try:
-        toDaySaidSwitch=AutoTweet(toDaySaidSwitch,api)
-        l.LogWrite("switch",str("toDaySaidSwitch"))
+        IgnoreListFile.close()
     except:
-        print("定期更新に失敗しました。")
-        l.LogWrite("switch",str("toDaySaidSwitch"))
-        l.LogWrite("print",traceback.format_exc())
-    try:
-        directMail=api.GetDirectMessages()
-        ignoreList=DirectMailCheck(directMail,ignoreList,memberList,api)
-        l.LogWrite("check",str("True"))
-    except:
-        print("何らかの処理に失敗しています。65秒後に再度更新します。")
-        l.LogWrite("print",traceback.format_exc())
-        l.LogWrite("check",str("False"))
-    #Twitter側の更新はここまで
-    #Ignoreファイルの更新はここから
+        print("IgnoreListFile.close() was failed")
+
+    ignoreList = DirectMailCheck(directMail, ignoreList, memberList, api)
+
+    # とりあえずここまでで起動時のセットアップを終了です
+    # Ignoreファイルの更新
     print("Ignoreファイルの更新を行います。")
-    strings=""
-    os.remove(IGNOREFILE)
-    writingData=open(IGNOREFILE,'w')
-    for t in range(len(ignoreList)-1):
-        strings+=str(ignoreList[t])+"\n"
-    strings+=str(ignoreList[len(ignoreList)-1])
-    strings=strings.replace("\n\n","\n")
+    writingData = open(IGNOREFILE, 'w')
+    strings = ""
     writingData.write(strings)
     writingData.close()
-    print("Ignoreファイルの更新は終了しました。行数:"+str(len(ignoreList)))
-    #ignoreファイルの更新を終了
+    writingData = open(IGNOREFILE, 'w')
+    for t in range(len(ignoreList) - 1):
+        strings += str(ignoreList[t]) + "\n"
+    strings += str(ignoreList[len(ignoreList) - 1])
+    strings = strings.replace("\n\n", "\n")
+    writingData.write(strings)
+    writingData.close()
+    print("Ignoreファイルの更新は終了しました。")
+    # ここで更新終了
+    # ここから自動システムになります。
+    # ダイレクトメッセージの取得間隔は安定をとって、65秒に1回にしています。
+    toDaySaidSwitch = False
+
+    l.LogWrite(type1="login")
+    while (True):
+        rootcomand.ReList(api, memberList)
+        print("定期更新モードです。")
+        print("---Ctrl+Dで終了出来ます。---")
+        time.sleep(65)
+        try:
+            toDaySaidSwitch = AutoTweet(toDaySaidSwitch, api)
+            l.LogWrite("switch", str("toDaySaidSwitch"))
+        except:
+            print("定期更新に失敗しました。")
+            l.LogWrite("switch", str("toDaySaidSwitch"))
+            l.LogWrite("print", traceback.format_exc())
+        try:
+            directMail = api.GetDirectMessages()
+            ignoreList = DirectMailCheck(directMail, ignoreList, memberList, api)
+            l.LogWrite("check", str("True"))
+        except:
+            print("何らかの処理に失敗しています。65秒後に再度更新します。")
+            l.LogWrite("print", traceback.format_exc())
+            l.LogWrite("check", str("False"))
+        # Twitter側の更新はここまで
+        # Ignoreファイルの更新はここから
+        print("Ignoreファイルの更新を行います。")
+        strings = ""
+        os.remove(IGNOREFILE)
+        writingData = open(IGNOREFILE, 'w')
+        for t in range(len(ignoreList) - 1):
+            strings += str(ignoreList[t]) + "\n"
+        strings += str(ignoreList[len(ignoreList) - 1])
+        strings = strings.replace("\n\n", "\n")
+        writingData.write(strings)
+        writingData.close()
+        print("Ignoreファイルの更新は終了しました。行数:" + str(len(ignoreList)))
+        # ignoreファイルの更新を終了
 
