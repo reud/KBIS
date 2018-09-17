@@ -19,7 +19,7 @@ class DataBases(object):
             self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
         else:
             self.twitterBook = '../../KBIS_Workingplace/Twitter対応リスト.xlsx'
-            self.moneyBook='../../KBIS_Workingplace/個人支払出納管理簿.xlsx'
+            self.moneyBook=os.environ['KANRIDIR']
             #self.twitterBook = '../Tools/Twitter対応リスト.xlsx'
             #self.moneyBook='../Tools/237585_個人支払出納管理簿.xlsx'
         self.connect = sqlite3.connect(":memory:")
